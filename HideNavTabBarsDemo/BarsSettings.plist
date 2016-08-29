@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>name</key>
+		<string>hideNavBar</string>
+		<key>label</key>
+		<string>Hide Navigation Bar</string>
+		<key>detail</key>
+		<string>When on, the navigation bar can be hidden.</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>hideTabBar</string>
+		<key>label</key>
+		<string>Hide Tab Bar</string>
+		<key>detail</key>
+		<string>&quot;When on, the tab bar can be hidden.</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>hideOnAppear</string>
+		<key>label</key>
+		<string>Hide Bars on Appear</string>
+		<key>detail</key>
+		<string>When on, bars auto-hide after the view appears.</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>showOnAppear</string>
+		<key>label</key>
+		<string>Show Bars on Appear</string>
+		<key>detail</key>
+		<string>When on, bars show when returning to the view.</string>
+	</dict>
+</array>
+</plist>
