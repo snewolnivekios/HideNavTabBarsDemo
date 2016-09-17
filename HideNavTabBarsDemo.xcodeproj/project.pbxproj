@@ -19,6 +19,7 @@
 		DCD895971D67C7E6001BF9A8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCD895951D67C7E6001BF9A8 /* LaunchScreen.storyboard */; };
 		DCD895A01D67C81C001BF9A8 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCD8959E1D67C81C001BF9A8 /* LICENSE.txt */; };
 		DCD895A11D67C81C001BF9A8 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = DCD8959F1D67C81C001BF9A8 /* README.md */; };
+		DCEFDFC81D73B6BD00321C7B /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCEFDFC71D73B6BD00321C7B /* FirstViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		DCD895981D67C7E6001BF9A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DCD8959E1D67C81C001BF9A8 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		DCD8959F1D67C81C001BF9A8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DCEFDFC71D73B6BD00321C7B /* FirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 				DC1CF11B1D6DCEFA000F3AF7 /* BarsSettingsModel.swift */,
 				DC1CF11F1D6FED9E000F3AF7 /* BarsSettings.plist */,
 				DC1CF11D1D6DE788000F3AF7 /* LabelDetailSwitchModelProtocol.swift */,
+				DCEFDFC71D73B6BD00321C7B /* FirstViewController.swift */,
 				DCD8958E1D67C7E6001BF9A8 /* SecondViewController.swift */,
 				DCD895901D67C7E6001BF9A8 /* Main.storyboard */,
 				DCD895931D67C7E6001BF9A8 /* Assets.xcassets */,
@@ -163,6 +166,7 @@
 				DC1CF11E1D6DE788000F3AF7 /* LabelDetailSwitchModelProtocol.swift in Sources */,
 				DCD8958F1D67C7E6001BF9A8 /* SecondViewController.swift in Sources */,
 				DC1CF1181D6DC6F9000F3AF7 /* BarsSettingsViewController.swift in Sources */,
+				DCEFDFC81D73B6BD00321C7B /* FirstViewController.swift in Sources */,
 				DC1BBAAD1D67CE7600EFE1B4 /* BarsViewController.swift in Sources */,
 				DCD8958B1D67C7E6001BF9A8 /* AppDelegate.swift in Sources */,
 				DCD895A11D67C81C001BF9A8 /* README.md in Sources */,

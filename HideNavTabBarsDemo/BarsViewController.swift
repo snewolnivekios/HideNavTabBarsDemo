@@ -29,7 +29,7 @@ class BarsViewController: UIViewController {
   var model = BarsSettingsModel()
 
   /// True when the bars are currently hidden; false, otherwise.
-  private var barsHidden = false
+  var barsHidden = false
 
   /// The means by which the bars are hidden after a delay.
   private var autoHideTimer: Timer?
@@ -126,7 +126,7 @@ class BarsViewController: UIViewController {
     // Hide/show bars
     barsHidden = hidden
     if model.hideNavBar {
-      navigationController?.setNavigationBarHidden(hidden, animated: animated)
+      setNavBar(hidden: hidden, animated: animated)
     }
     if model.hideTabBar {
       setTabBar(hidden: hidden, animated: animated)

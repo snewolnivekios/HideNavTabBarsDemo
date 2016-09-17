@@ -29,5 +29,30 @@ class SecondViewController: BarsViewController {
     model.set(isOn: false, forName: "hideTabBar")
     model.set(isOn: false, forName: "hideOnAppear")
   }
+
+
+  /// As the target action for the `LabelDetailSwitchModelProtocol` (`BarsSettingsModel`) switch value changes, if the bars are currently hidden, shows or hides them in accordance with the change to their corresponding switch setting.
+  ///
+  /// For example, if both bars are hidden and the user turns off hiding for the tab bar, this  shows the tab bar. If they turn on hiding for the tab bar, it hides the tab bar.
+  ///
+  /// If the bars are not currently hidden, changes to the settings have no effect.
+  /// - parameter name: The identifier for the setting.
+  /// - parameter isOn: Mirrors the changed `isOn` value of the corresponding `UISwitch`.
+  override func changedSetting(with name: String, isOn: Bool) {
+    super.changedSetting(with: name, isOn: isOn)
+
+    // If the bars have been manually shown, leave them shown
+    guard !barsHidden else { return }
+
+    // Otherwise, update bar visibility based on new setting
+    switch name {
+    case "hideTabBar":
+      setTabBar(hidden: isOn, animated: true)
+    case "hideNavBar":
+      setNavBar(hidden: isOn, animated: true)
+    default:
+      break
+    }
+  }
 }
 
