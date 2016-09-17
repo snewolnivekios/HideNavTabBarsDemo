@@ -133,7 +133,7 @@ class BarsSettingsModel: LabelDetailSwitchModelProtocol {
   }
 
   // See protocol definition.
-  func add(observer: SwitchObserver, forObject object: AnyObject) {
+  func add(observer: @escaping SwitchObserver, forObject object: AnyObject) {
     observers[String(describing: type(of: object))] = observer
   }
 }
