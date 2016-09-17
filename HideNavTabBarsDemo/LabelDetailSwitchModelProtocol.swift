@@ -20,14 +20,13 @@
 
 import UIKit
 
-/// A closure that receives a setting `name` and corresponding switch `isOn` state as arguments. For use in notifying of changes to the `isOn` state.
+/// A closure that receives notification of a change in the on/off state of a particular setting.
 /// - parameter name: The name of the setting.
 /// - parameter isOn: Mirrors the cell's new `UISwitch isOn` state.
 typealias SwitchObserver = (_ name: String, _ isOn: Bool) -> Void
 
 
 /// Types conforming to this protocol provide the essentials for populating, querying, and receiving notifications from a model that backs a table view cell with label text, detail text, and a switch control.
-///
 protocol LabelDetailSwitchModelProtocol {
 
   /// The number of sections in the table view.
@@ -37,22 +36,22 @@ protocol LabelDetailSwitchModelProtocol {
   func numberOfRows(inSection section: Int) -> Int
 
   /// Returns the label-detail-switch content for the cell at the given `indexPath`.
-  /// parameter indexPath: The cell location within the table view.
+  /// - parameter indexPath: The cell location within the table view.
   func content(for indexPath: IndexPath) -> (label: String, detail: String, isOn: Bool)?
 
-  /// Sets the model switch state for the given `indexPath`.
-  /// parameter isOn: When true, the switch is selected.
-  /// parameter indexPath: The index path of the setting corresponding to the switch.
-  mutating func set(isOn: Bool, for indexPath: IndexPath)
+  /// Returns `true` if the model switch state is "on" for the given property `name`, or `nil`, if there is no property matching `name`.
+  /// - parameter name: The name of the setting.
+  func isOn(forName name: String) -> Bool?
 
-  /// Sets the model switch state for the given property `name`.
-  /// parameter isOn: When true, the switch is selected.
-  /// parameter name: The name of the setting corresponding to the switch.
+  /// Sets the model switch state for the given property `name` if a setting by that `name` exists.
+  /// - parameter isOn: When true, the switch is selected.
+  /// - parameter name: The name of the setting corresponding to the switch.
   mutating func set(isOn: Bool, forName name: String)
 
-  /// Returns true if the model switch state is "on" for the given property `name`.
-  /// parameter name: The name of the setting.
-  func isOn(forName name: String) -> Bool?
+  /// Sets the model switch state for the given `indexPath`.
+  /// - parameter isOn: When true, the switch is selected.
+  /// - parameter indexPath: The index path of the setting corresponding to the switch.
+  mutating func set(isOn: Bool, for indexPath: IndexPath)
 
   /// Adds the given `observer` closure to the collection of closures that are called when a model switch value changes.
   /// - parameter observer: A closure that receives the setting `name` and switch `isOn` state as arguments.

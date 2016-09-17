@@ -20,7 +20,7 @@
 
 import UIKit
 
-/// 
+/// Provides a model that represents the configurable behaviors of the navigation and tab bars, to include for each behavior its title, description, and enabled state as would be represented in a table veiw. To this end and conforming to `LabelDetailSwitchModelProtocol`, this includes the essentials for setting, querying, and receiving notifications of changes to a behavior's enabled state.
 class BarsSettingsModel: LabelDetailSwitchModelProtocol {
 
   /// Bar settings keyed on setting name.
@@ -87,15 +87,18 @@ class BarsSettingsModel: LabelDetailSwitchModelProtocol {
   /// The observers notified of changes to any switch `isOn` state.
   var observers: [String: SwitchObserver] = [:]
 
-  // See protocol definition.
+  /// The number of sections in the table view.
   private(set) var numberOfSections = 1
 
-  // See protocol definition.
+
+  /// The number of rows for the identified `section` in the table view.
   func numberOfRows(inSection section: Int) -> Int {
     return settings.count
   }
 
-  // See protocol definition.
+
+  /// Returns the label-detail-switch content for the cell at the given `indexPath`.
+  /// - parameter indexPath: The cell location within the table view.
   func content(for indexPath: IndexPath) -> (label: String, detail: String, isOn: Bool)? {
     if let name = settingsPaths[indexPath],
       let configuration = settings[name] {
@@ -104,7 +107,9 @@ class BarsSettingsModel: LabelDetailSwitchModelProtocol {
     return nil
   }
 
-  // See protocol definition.
+
+  /// Returns `true` if the model switch state is "on" for the given property `name`, or `nil`, if there is no setting matching `name`.
+  /// - parameter name: The name of the setting.
   func isOn(forName name: String) -> Bool? {
     if let configuration = settings[name] {
       return configuration.isOn
@@ -112,7 +117,10 @@ class BarsSettingsModel: LabelDetailSwitchModelProtocol {
     return nil
   }
 
-  // See protocol definition.
+
+  /// Sets the model switch state for the given `indexPath`.
+  /// - parameter isOn: When true, the switch is selected.
+  /// - parameter indexPath: The index path of the setting corresponding to the switch.
   func set(isOn: Bool, for indexPath: IndexPath) {
     if let name = settingsPaths[indexPath], let _ = settings[name] {
       settings[name]!.isOn = isOn
@@ -122,7 +130,10 @@ class BarsSettingsModel: LabelDetailSwitchModelProtocol {
     }
   }
 
-  // See protocol definition.
+
+  /// Sets the model switch state for the given property `name` if a setting by that `name` exists.
+  /// - parameter isOn: When true, the switch is selected.
+  /// - parameter name: The name of the setting corresponding to the switch.
   func set(isOn: Bool, forName name: String) {
     if let _ = settings[name] {
       settings[name]!.isOn = isOn
@@ -132,7 +143,10 @@ class BarsSettingsModel: LabelDetailSwitchModelProtocol {
     }
   }
 
-  // See protocol definition.
+
+  /// Adds the given `observer` closure to the collection of closures that are called when a model switch value changes.
+  /// - parameter observer: A closure that receives the setting `name` and switch `isOn` state as arguments.
+  /// - parameter object: The object containing `observer`.
   func add(observer: @escaping SwitchObserver, forObject object: AnyObject) {
     observers[String(describing: type(of: object))] = observer
   }
