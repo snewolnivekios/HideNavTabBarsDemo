@@ -26,7 +26,7 @@ import UIKit
 class BarsViewController: UIViewController {
 
   /// The keeper of the nav and tab bar hide/show settings.
-  var model = BarsSettingsModel()
+  var model: BarsSettingsModel!
 
   /// True when the bars are currently hidden; false, otherwise.
   var barsHidden = false
@@ -40,6 +40,13 @@ class BarsViewController: UIViewController {
   ///
   /// If the user explicitly _shows_ the bars when hide-on-appear is enabled, this value is used by `toggleBars(sender:)` to temporarily turn off auto hiding until the user explicitly _hides_ the bars.
   private var hideOnAppear: Bool!
+
+
+  /// Initializes the settings model with an id unique to `self`.
+  required init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
+    model = BarsSettingsModel(id: "\(self)")
+  }
 
 
   //////

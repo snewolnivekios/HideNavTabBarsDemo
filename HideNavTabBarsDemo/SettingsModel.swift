@@ -27,8 +27,13 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   //////
   // MARK: - Model Data
 
-  /// Bar settings keyed on setting name.
-  var settings: [String: (label: String, detail: String, isOn: Bool)] = [:]
+  let modelId: String
+
+  /// Bar setting strings keyed on setting name.
+  var settingStrings: [String: (label: String, detail: String)] = [:]
+
+  /// Bar setting states keyed on setting name.
+  var settingStates: [String: Bool] = [:]
 
   /// Maps index paths to their corresponding key in `settings`.
   var settingsPaths: [IndexPath: String] = [:]
@@ -50,13 +55,16 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   let plistDetailName = "detail"
 
 
-  /// Populates `settings` and `settingsPaths` from the bars settings property list.
-  init() {
+  /// Populates `settingStrings` and `settingsPaths` from the bars settings property list, and initializes all setting states to on.
+  /// - parameter id: A unique identifier that distignuishes one model from another.
+  init(id: String) {
+    modelId = id
     guard let path = Bundle.main.path(forResource: initialSettingsPlist, ofType: "plist"),
       let initialSettings = NSArray(contentsOfFile: path) as? [[String:String]]
       else { return }
     for (index, setting) in initialSettings.enumerated() {
-      settings[setting[plistNameName]!] = (label: setting[plistLabelName]!, detail: setting[plistDetailName]!, isOn: true)
+      settingStrings[setting[plistNameName]!] = (label: setting[plistLabelName]!, detail: setting[plistDetailName]!)
+      settingStates[setting[plistNameName]!] = true
       settingsPaths[IndexPath(row: index, section: 0)] = setting[plistNameName]!
     }
   }
@@ -74,7 +82,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
 
   /// The number of rows for the identified `section` in the table view.
   func numberOfRows(inSection section: Int) -> Int {
-    return settings.count
+    return settingStrings.count
   }
 
 
@@ -82,8 +90,9 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   /// - parameter indexPath: The cell location within the table view.
   func content(for indexPath: IndexPath) -> (label: String, detail: String, isOn: Bool)? {
     if let name = settingsPaths[indexPath],
-      let configuration = settings[name] {
-      return configuration
+      let strings = settingStrings[name],
+      let state = settingStates[name] {
+      return (strings.label, strings.detail, state)
     }
     return nil
   }
@@ -92,10 +101,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   /// Returns `true` if the model switch state is "on" for the given property `name`, or `nil`, if there is no setting matching `name`.
   /// - parameter name: The name of the setting.
   func isOn(forName name: String) -> Bool? {
-    if let configuration = settings[name] {
-      return configuration.isOn
-    }
-    return nil
+    return settingStates[name]
   }
 
 
@@ -103,11 +109,8 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   /// - parameter isOn: When true, the switch is selected.
   /// - parameter indexPath: The index path of the setting corresponding to the switch.
   func set(isOn: Bool, for indexPath: IndexPath) {
-    if let name = settingsPaths[indexPath], let _ = settings[name] {
-      settings[name]!.isOn = isOn
-      for observer in observers.values {
-        observer(name, isOn)
-      }
+    if let name = settingsPaths[indexPath] {
+      set(isOn: isOn, forName: name)
     }
   }
 
@@ -116,8 +119,8 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   /// - parameter isOn: When true, the switch is selected.
   /// - parameter name: The name of the setting corresponding to the switch.
   func set(isOn: Bool, forName name: String) {
-    if let _ = settings[name] {
-      settings[name]!.isOn = isOn
+    if let _ = settingStrings[name] {
+      settingStates[name] = isOn
       for observer in observers.values {
         observer(name, isOn)
       }

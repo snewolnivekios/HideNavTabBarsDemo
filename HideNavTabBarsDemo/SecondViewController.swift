@@ -42,7 +42,7 @@ class SecondViewController: BarsViewController {
     super.changedSetting(with: name, isOn: isOn)
 
     // If the bars have been manually shown, leave them shown
-    guard !barsHidden else { return }
+    guard barsHidden else { return }
 
     // Otherwise, update bar visibility based on new setting
     switch name {
