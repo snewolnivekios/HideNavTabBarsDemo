@@ -23,17 +23,9 @@ import UIKit
 /// Demonstrates how to customize the bar settings for a subclass of `BarsViewController`.
 class SecondViewController: BarsViewController {
 
-  /// Sets non-default navigation and tab bar behavior.
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    model.set(isOn: false, forName: "hideTabBar")
-    model.set(isOn: false, forName: "hideOnAppear")
-  }
-
-
-  /// As the target action for the `LabelDetailSwitchModelProtocol` (`BarsSettingsModel`) switch value changes, if the bars are currently hidden, shows or hides them in accordance with the change to their corresponding switch setting.
+  /// As the target action for the `LabelDetailSwitchModelProtocol` (`BarsSettingsModel`) changes in switch value, if the bars are currently hidden, shows or hides them in accordance with the change to their corresponding switch setting.
   ///
-  /// For example, if both bars are hidden and the user turns off hiding for the tab bar, this  shows the tab bar. If they turn on hiding for the tab bar, it hides the tab bar.
+  /// For example, if both bars are hidden and the user turns off hiding for the tab bar, this shows the tab bar. If they turn on hiding for the tab bar, it hides the tab bar.
   ///
   /// If the bars are not currently hidden, changes to the settings have no effect.
   /// - parameter name: The identifier for the setting.
@@ -41,7 +33,7 @@ class SecondViewController: BarsViewController {
   override func changedSetting(with name: String, isOn: Bool) {
     super.changedSetting(with: name, isOn: isOn)
 
-    // If the bars have been manually shown, leave them shown
+    // If the bars are not hidden, their visible state doesn't mirror that of the switch
     guard barsHidden else { return }
 
     // Otherwise, update bar visibility based on new setting

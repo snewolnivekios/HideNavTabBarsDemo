@@ -45,7 +45,8 @@ class BarsViewController: UIViewController {
   /// Initializes the settings model with an id unique to `self`.
   required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
-    model = BarsSettingsModel(id: "\(self)")
+    let modelId = String(describing: self).components(separatedBy: CharacterSet(charactersIn: ".:"))[1] // Where source string is "<HideNavTabBarsDemo.FirstViewController: 0x121d10150>"
+    model = BarsSettingsModel(id: modelId)
   }
 
 

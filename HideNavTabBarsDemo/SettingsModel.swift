@@ -55,6 +55,9 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   let plistDetailName = "detail"
 
 
+  //////
+  // MARK: - Initialization
+
   /// Populates `settingStrings` and `settingsPaths` from the bars settings property list, and initializes all setting states to on.
   /// - parameter id: A unique identifier that distignuishes one model from another.
   init(id: String) {
@@ -63,10 +66,30 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
       let initialSettings = NSArray(contentsOfFile: path) as? [[String:String]]
       else { return }
     for (index, setting) in initialSettings.enumerated() {
-      settingStrings[setting[plistNameName]!] = (label: setting[plistLabelName]!, detail: setting[plistDetailName]!)
-      settingStates[setting[plistNameName]!] = true
+      let name = setting[plistNameName]!
+      settingStrings[name] = (label: setting[plistLabelName]!, detail: setting[plistDetailName]!)
       settingsPaths[IndexPath(row: index, section: 0)] = setting[plistNameName]!
     }
+    restoreSettings()
+  }
+
+
+  /// Restores the setting states from persistent storage, defaulting all to on if not yet persisted.
+  func restoreSettings() {
+    if let savedStates = UserDefaults.standard.value(forKey: modelId) as? [String: Bool] {
+      settingStates = savedStates
+    } else {
+      for name in settingStrings.keys {
+        settingStates[name] = true
+      }
+      recordSettings()
+    }
+  }
+
+
+  /// Writes the setting states to persistent storage.
+  func recordSettings() {
+    UserDefaults.standard.set(settingStates, forKey: modelId)
   }
 
 
@@ -121,6 +144,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   func set(isOn: Bool, forName name: String) {
     if let _ = settingStrings[name] {
       settingStates[name] = isOn
+      recordSettings()
       for observer in observers.values {
         observer(name, isOn)
       }
