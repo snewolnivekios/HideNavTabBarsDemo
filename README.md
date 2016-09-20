@@ -10,3 +10,10 @@ Demonstrates:
 - User-initiated hiding and showing (and time-delay hiding) of a navigation bar and/or tab bar through the use of the BarsViewController.
 - Protocol for modeling table view cells that  
 - Protocol-based MVC model BarsSettingsModel
+
+Reusable Components:
+- LabelDetailSwitchModelProtocol
+- SetingsModel
+
+Topics
+- A reusable settings view and model

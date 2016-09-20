@@ -26,26 +26,38 @@ class BarsSettingsViewController: UITableViewController {
   /// The data containing switch-configurable navigation and tab bar animation settings.
   var model: LabelDetailSwitchModelProtocol!
 
+
+  /// Configures cell heights to adjust to autosizing subviews (where Lines is set to 0).
+  override func viewDidLoad() {
+    tableView.rowHeight = UITableViewAutomaticDimension
+    tableView.estimatedRowHeight = 42
+  }
+
+
   /// Shows the navigation bar.
   override func viewWillAppear(_ animated: Bool) {
     navigationController?.setNavigationBarHidden(false, animated: true)
   }
+
 
   /// Returns the number of settings groups.
   override func numberOfSections(in tableView: UITableView) -> Int {
     return model.numberOfSections
   }
 
+
   /// Returns the number of configuration items in the given `section`.
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return model.numberOfRows(inSection: section)
   }
+
 
   /// Returns a cell populated with `model`-provided data corresponding to the given `indexPath`.
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "LabelDetailSwitch") as! LabelDetailSwitchCell
     if let content = model.content(for: indexPath) {
       cell.label.text = content.label
+      cell.label.sizeToFit()
       cell.detail.text = content.detail
       cell.switch.isOn = content.isOn
       cell.switch.tag = indexPath.section * 100 + indexPath.row
@@ -54,6 +66,7 @@ class BarsSettingsViewController: UITableViewController {
     return cell
   }
 
+  
   /// Updates the model with the setting corresponding do the given `sender` switch. 
   func switchValueChanged(sender: UISwitch) {
     let section = sender.tag / 100

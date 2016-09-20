@@ -16,7 +16,7 @@
 		<key>label</key>
 		<string>Hide Tab Bar</string>
 		<key>detail</key>
-		<string>&quot;When on, the tab bar can be hidden.</string>
+		<string>When on, the tab bar can be hidden.</string>
 	</dict>
 	<dict>
 		<key>name</key>
