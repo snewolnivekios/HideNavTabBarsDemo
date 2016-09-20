@@ -38,6 +38,9 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   /// Maps index paths to their corresponding key in `settings`.
   var settingsPaths: [IndexPath: String] = [:]
 
+  /// When `true`, changes to the settings are persisted, and then restored with each app startup.
+  var persisted = true
+
 
   //////
   // MARK: - Property List Parmaeters
@@ -74,9 +77,9 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   }
 
 
-  /// Restores the setting states from persistent storage, defaulting all to on if not yet persisted.
+  /// Restores the setting states from persistent storage, defaulting all to on if not yet persisted or `persisted` is `false`.
   func restoreSettings() {
-    if let savedStates = UserDefaults.standard.value(forKey: modelId) as? [String: Bool] {
+    if persisted, let savedStates = UserDefaults.standard.value(forKey: modelId) as? [String: Bool] {
       settingStates = savedStates
     } else {
       for name in settingStrings.keys {
@@ -87,8 +90,9 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   }
 
 
-  /// Writes the setting states to persistent storage.
+  /// Writes the setting states to persistent storage, provided `persisted` is `true`.
   func recordSettings() {
+    guard persisted else { return }
     UserDefaults.standard.set(settingStates, forKey: modelId)
   }
 

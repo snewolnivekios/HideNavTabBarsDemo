@@ -37,8 +37,8 @@
 		DCD895931D67C7E6001BF9A8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DCD895961D67C7E6001BF9A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DCD895981D67C7E6001BF9A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DCD8959E1D67C81C001BF9A8 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		DCD8959F1D67C81C001BF9A8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DCD8959E1D67C81C001BF9A8 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = ../LICENSE.txt; sourceTree = "<group>"; };
+		DCD8959F1D67C81C001BF9A8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		DCEFDFC71D73B6BD00321C7B /* FirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -56,8 +56,6 @@
 		DCD8957E1D67C7E6001BF9A8 = {
 			isa = PBXGroup;
 			children = (
-				DCD8959E1D67C81C001BF9A8 /* LICENSE.txt */,
-				DCD8959F1D67C81C001BF9A8 /* README.md */,
 				DCD895891D67C7E6001BF9A8 /* HideNavTabBarsDemo */,
 				DCD895881D67C7E6001BF9A8 /* Products */,
 			);
@@ -74,21 +72,55 @@
 		DCD895891D67C7E6001BF9A8 /* HideNavTabBarsDemo */ = {
 			isa = PBXGroup;
 			children = (
-				DCD8958A1D67C7E6001BF9A8 /* AppDelegate.swift */,
+				DCF5743A1D90EB9D004E5402 /* App */,
+				DCF574371D90EB0C004E5402 /* Model */,
+				DCF574381D90EB13004E5402 /* View */,
+				DCF574391D90EB19004E5402 /* Controller */,
+			);
+			path = HideNavTabBarsDemo;
+			sourceTree = "<group>";
+		};
+		DCF574371D90EB0C004E5402 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				DC1CF11F1D6FED9E000F3AF7 /* BarsSettings.plist */,
+				DC8F96FE1D8DE31500D14707 /* BarsSettingsModel.swift */,
+				DC1CF11B1D6DCEFA000F3AF7 /* SettingsModel.swift */,
+				DC1CF11D1D6DE788000F3AF7 /* LabelDetailSwitchModelProtocol.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		DCF574381D90EB13004E5402 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				DCD895901D67C7E6001BF9A8 /* Main.storyboard */,
+				DCD895951D67C7E6001BF9A8 /* LaunchScreen.storyboard */,
+				DCD895931D67C7E6001BF9A8 /* Assets.xcassets */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		DCF574391D90EB19004E5402 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
 				DC1BBAAC1D67CE7600EFE1B4 /* BarsViewController.swift */,
 				DCEFDFC71D73B6BD00321C7B /* FirstViewController.swift */,
 				DCD8958E1D67C7E6001BF9A8 /* SecondViewController.swift */,
 				DC1CF1171D6DC6F9000F3AF7 /* BarsSettingsViewController.swift */,
-				DC8F96FE1D8DE31500D14707 /* BarsSettingsModel.swift */,
-				DC1CF11B1D6DCEFA000F3AF7 /* SettingsModel.swift */,
-				DC1CF11D1D6DE788000F3AF7 /* LabelDetailSwitchModelProtocol.swift */,
-				DCD895901D67C7E6001BF9A8 /* Main.storyboard */,
-				DC1CF11F1D6FED9E000F3AF7 /* BarsSettings.plist */,
-				DCD895931D67C7E6001BF9A8 /* Assets.xcassets */,
-				DCD895951D67C7E6001BF9A8 /* LaunchScreen.storyboard */,
-				DCD895981D67C7E6001BF9A8 /* Info.plist */,
 			);
-			path = HideNavTabBarsDemo;
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		DCF5743A1D90EB9D004E5402 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				DCD8958A1D67C7E6001BF9A8 /* AppDelegate.swift */,
+				DCD895981D67C7E6001BF9A8 /* Info.plist */,
+				DCD8959E1D67C81C001BF9A8 /* LICENSE.txt */,
+				DCD8959F1D67C81C001BF9A8 /* README.md */,
+			);
+			name = App;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

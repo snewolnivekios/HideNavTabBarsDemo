@@ -20,14 +20,14 @@
 
 import UIKit
 
-/// Demonstrates how to customize the bar settings for a subclass of `BarsViewController`.
+/// Demonstrates how to configure a controller-embedded `BarsSettingsViewController` in the `BarsViewController` implementing those same settings.
 class SecondViewController: BarsViewController {
 
   /// As the target action for the `LabelDetailSwitchModelProtocol` (`BarsSettingsModel`) changes in switch value, if the bars are currently hidden, shows or hides them in accordance with the change to their corresponding switch setting.
   ///
   /// For example, if both bars are hidden and the user turns off hiding for the tab bar, this shows the tab bar. If they turn on hiding for the tab bar, it hides the tab bar.
   ///
-  /// If the bars are not currently hidden, changes to the settings have no effect.
+  /// If the bars are not currently hidden (have been manually un-hidden), changes to the settings have no effect on the current visibility of the bars.
   /// - parameter name: The identifier for the setting.
   /// - parameter isOn: Mirrors the changed `isOn` value of the corresponding `UISwitch`.
   override func changedSetting(with name: String, isOn: Bool) {

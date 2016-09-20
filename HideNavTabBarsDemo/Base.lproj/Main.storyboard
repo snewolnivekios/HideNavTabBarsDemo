@@ -108,12 +108,12 @@
             <objects>
                 <tableViewController title="Bar Settings" id="WKX-66-2zk" customClass="BarsSettingsViewController" customModule="HideNavTabBarsDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="65" sectionHeaderHeight="28" sectionFooterHeight="28" id="yy9-bd-Jvd">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="545"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="LabelDetailSwitch" id="Vo4-93-JPb" userLabel="LabelDetailSwitch" customClass="LabelDetailSwitchCell" customModule="HideNavTabBarsDemo" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="65"/>
+                                <rect key="frame" x="0.0" y="92" width="375" height="65"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Vo4-93-JPb" id="8rw-t0-IuS">
                                     <frame key="frameInset" width="375" height="64"/>
@@ -121,7 +121,7 @@
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7rW-MF-T3L">
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="21" id="drW-yK-I9b"/>
+                                                <constraint firstAttribute="height" constant="21" id="bjp-r9-mt9"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
@@ -135,15 +135,15 @@
                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Byq-2y-gow"/>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="7rW-MF-T3L" firstAttribute="top" secondItem="Byq-2y-gow" secondAttribute="top" id="0lb-bb-fdh"/>
-                                        <constraint firstItem="lMC-5X-utz" firstAttribute="top" secondItem="7rW-MF-T3L" secondAttribute="bottom" constant="6" id="4Ge-Z8-Cm2"/>
-                                        <constraint firstItem="7rW-MF-T3L" firstAttribute="leading" secondItem="8rw-t0-IuS" secondAttribute="leadingMargin" id="5x2-h3-608"/>
-                                        <constraint firstItem="lMC-5X-utz" firstAttribute="bottom" secondItem="8rw-t0-IuS" secondAttribute="bottomMargin" id="a9p-QN-UjM"/>
-                                        <constraint firstItem="Byq-2y-gow" firstAttribute="leading" secondItem="lMC-5X-utz" secondAttribute="trailing" constant="8" symbolic="YES" id="aM2-GQ-Yz1"/>
-                                        <constraint firstItem="Byq-2y-gow" firstAttribute="trailing" secondItem="8rw-t0-IuS" secondAttribute="trailingMargin" id="fXs-Lb-BzC"/>
-                                        <constraint firstItem="7rW-MF-T3L" firstAttribute="leading" secondItem="lMC-5X-utz" secondAttribute="leading" id="nEH-hR-vk9"/>
-                                        <constraint firstItem="Byq-2y-gow" firstAttribute="leading" secondItem="7rW-MF-T3L" secondAttribute="trailing" constant="8" symbolic="YES" id="pqA-xl-NGJ"/>
-                                        <constraint firstItem="7rW-MF-T3L" firstAttribute="top" secondItem="8rw-t0-IuS" secondAttribute="topMargin" id="s66-hv-lGL"/>
+                                        <constraint firstItem="Byq-2y-gow" firstAttribute="leading" secondItem="lMC-5X-utz" secondAttribute="trailing" constant="8" symbolic="YES" id="4Sd-M4-kUj"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="lMC-5X-utz" secondAttribute="bottom" constant="-1" id="5mt-ve-PCN"/>
+                                        <constraint firstItem="7rW-MF-T3L" firstAttribute="top" secondItem="Byq-2y-gow" secondAttribute="top" id="Cea-JH-xaF"/>
+                                        <constraint firstItem="7rW-MF-T3L" firstAttribute="leading" secondItem="8rw-t0-IuS" secondAttribute="leadingMargin" id="G4I-c6-e3V"/>
+                                        <constraint firstItem="7rW-MF-T3L" firstAttribute="leading" secondItem="lMC-5X-utz" secondAttribute="leading" id="YVh-bc-Px7"/>
+                                        <constraint firstItem="Byq-2y-gow" firstAttribute="trailing" secondItem="8rw-t0-IuS" secondAttribute="trailingMargin" id="bUe-kS-tUi"/>
+                                        <constraint firstItem="7rW-MF-T3L" firstAttribute="top" secondItem="8rw-t0-IuS" secondAttribute="topMargin" id="pCc-Ps-tc0"/>
+                                        <constraint firstItem="Byq-2y-gow" firstAttribute="leading" secondItem="7rW-MF-T3L" secondAttribute="trailing" constant="8" symbolic="YES" id="rz4-A5-72m"/>
+                                        <constraint firstItem="lMC-5X-utz" firstAttribute="top" secondItem="7rW-MF-T3L" secondAttribute="bottom" constant="6" id="zcI-Rb-Dcs"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -227,6 +227,6 @@
         <image name="second" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="JVw-n8-bp5"/>
+        <segue reference="TCb-fO-yCP"/>
     </inferredMetricsTieBreakers>
 </document>

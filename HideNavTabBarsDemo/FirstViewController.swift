@@ -20,6 +20,17 @@
 
 import UIKit
 
+/// Demonstrates how to customize the settings for a `BarsViewController`.
+///
+/// Customizations include disabling persistence and defaulting the settings to hide-navigatino-bar: on; hide-tab-bar: off; hide-on-appear: off; show-on-appear: on.
 class FirstViewController: BarsViewController {
+
+  /// Sets non-default navigation and tab bar behavior.
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    model.persisted = false
+    model.set(isOn: false, forName: "hideTabBar")
+    model.set(isOn: false, forName: "hideOnAppear")
+  }
 
 }
