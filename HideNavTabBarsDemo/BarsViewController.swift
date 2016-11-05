@@ -31,6 +31,9 @@ class BarsViewController: UIViewController {
   /// True when the bars are currently hidden; false, otherwise.
   var barsHidden = false
 
+  /// The tag of the view to animate with the tab bar.
+  var tabBarAttachedViewTag: Int? { return nil }
+
   /// The means by which the bars are hidden after a delay.
   private var autoHideTimer: Timer?
 
@@ -162,8 +165,6 @@ class BarsViewController: UIViewController {
   func setTabBar(hidden: Bool, animated: Bool) {
     // Source: http://stackoverflow.com/a/27072876/4538429
 
-    //* This cannot be called before viewDidLayoutSubviews(), because the frame is not set before this time
-
     guard let tabBarController = tabBarController else { return }
 
     // Bail if the current state matches the desired state
@@ -178,10 +179,18 @@ class BarsViewController: UIViewController {
     // Zero duration means no animation
     let duration: TimeInterval = (animated ? 0.25 : 0.0)
 
-    //  Animate the tabBar
+    // Animate the tabBar
     UIView.animate(withDuration: duration) {
       tabBarController.tabBar.frame = frame.offsetBy(dx: 0, dy: offsetY)
-      return
+    }
+
+    // Animate tabbar-attached view
+    if let tabBarAttachedViewTag = tabBarAttachedViewTag, let attachedView = view.viewWithTag(tabBarAttachedViewTag) {
+      let currFrame = attachedView.frame
+      let newFrame = currFrame.offsetBy(dx: 0, dy: hidden ? offsetY : 0)
+      UIView.animate(withDuration: duration) {
+        attachedView.frame = newFrame
+      }
     }
   }
 

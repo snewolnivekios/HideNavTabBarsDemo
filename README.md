@@ -7,7 +7,7 @@ Current as of Swift 3 Xcode 8.0.
 See the post for more information.
 
 ### Demonstrates:
-- User-initiated hiding and showing (and time-delay hiding) of a navigation bar and/or tab bar
+- User-initiated hiding and showing (and time-delay hiding) of a navigation bar and/or tab bar and "attached" views
 - Using a plist to define table view strings strings
 - Using a protocol to model table view cells
 - Dynamically sizing table view cells
