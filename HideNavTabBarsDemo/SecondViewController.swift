@@ -34,7 +34,7 @@ class SecondViewController: BarsViewController {
     super.changedSetting(with: name, isOn: isOn)
 
     // If the bars are not hidden, their visible state doesn't mirror that of the switch
-    guard barsHidden else { return }
+    guard barsSettings.barsHidden else { return }
 
     // Otherwise, update bar visibility based on new setting
     switch name {

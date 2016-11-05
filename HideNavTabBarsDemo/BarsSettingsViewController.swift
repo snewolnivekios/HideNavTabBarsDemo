@@ -24,7 +24,7 @@ import UIKit
 class BarsSettingsViewController: UITableViewController {
 
   /// The data containing switch-configurable navigation and tab bar animation settings.
-  var model: LabelDetailSwitchModelProtocol!
+  var barsSettings: LabelDetailSwitchModelProtocol!
 
 
   /// Configures cell heights to adjust to autosizing subviews (where Lines is set to 0).
@@ -42,20 +42,20 @@ class BarsSettingsViewController: UITableViewController {
 
   /// Returns the number of settings groups.
   override func numberOfSections(in tableView: UITableView) -> Int {
-    return model.numberOfSections
+    return barsSettings.numberOfSections
   }
 
 
   /// Returns the number of configuration items in the given `section`.
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return model.numberOfRows(inSection: section)
+    return barsSettings.numberOfRows(inSection: section)
   }
 
 
-  /// Returns a cell populated with `model`-provided data corresponding to the given `indexPath`.
+  /// Returns a cell populated with `barsSettings`-provided data corresponding to the given `indexPath`.
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "LabelDetailSwitch") as! LabelDetailSwitchCell
-    if let content = model.content(for: indexPath) {
+    if let content = barsSettings.content(for: indexPath) {
       cell.label.text = content.label
       cell.label.sizeToFit()
       cell.detail.text = content.detail
@@ -67,10 +67,10 @@ class BarsSettingsViewController: UITableViewController {
   }
 
   
-  /// Updates the model with the setting corresponding do the given `sender` switch. 
+  /// Updates the `barsSettings` with the setting corresponding do the given `sender` switch.
   func switchValueChanged(sender: UISwitch) {
     let section = sender.tag / 100
     let row = sender.tag - section
-    model.set(isOn: sender.isOn, for: IndexPath(row: row, section: section))
+    barsSettings.set(isOn: sender.isOn, for: IndexPath(row: row, section: section))
   }
 }

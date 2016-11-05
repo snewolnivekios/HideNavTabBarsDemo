@@ -21,7 +21,7 @@
 import UIKit
 
 /// Adds convenience properties to `SettingsModel` specific to configuring behaviors of the navigation and tab bars.
-class BarsSettingsModel: SettingsModel {
+class BarsSettingsModel: SettingsModel, CustomStringConvertible {
 
   /// When true, the tab bar can be hidden.
   var hideTabBar: Bool {
@@ -50,4 +50,17 @@ class BarsSettingsModel: SettingsModel {
   /// The delay before the bars are automatically hidden.
   var autoHideDelay: TimeInterval = 3
 
+  /// The view animated with the tab bar.
+  var tabBarAttachedView: UIView?
+
+  /// True when the bars are currently hidden; false, otherwise.
+  var barsHidden: Bool = false
+
+  /// The means by which the bars are hidden after a delay.
+  var autoHideClosure: (() -> Void)?
+
+
+  var description: String {
+    return "\(#function): hideNavBar = \(hideNavBar); hideTabBar = \(hideTabBar); showOnAppear = \(showOnAppear); hideOnAppear = \(hideOnAppear); autoHideDelay = \(autoHideDelay)"
+  }
 }

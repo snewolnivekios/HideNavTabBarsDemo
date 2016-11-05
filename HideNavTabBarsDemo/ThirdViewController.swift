@@ -1,5 +1,5 @@
 //
-//  FirstViewController.swift
+//  ThirdViewController.swift
 //  HideNavTabBarsDemo
 //
 //  Copyright © 2016 Kevin L. Owens. All rights reserved.
@@ -20,18 +20,29 @@
 
 import UIKit
 
-/// Demonstrates how to customize the settings for a `BarsViewController`.
-///
-/// Customizations include disabling persistence and defaulting the settings to hide-navigatino-bar: on; hide-tab-bar: off; hide-on-appear: off; show-on-appear: on.
-class FirstViewController: BarsViewController {
+class ThirdViewController: UIViewController, HidingBars {
 
-  /// Sets non-default navigation and tab bar behavior.
+  /// A `HidingBars` protocol property, configures bar behaviors.
+  var barsSettings: BarsSettingsModel
+
+  required init?(coder aDecoder: NSCoder) {
+    barsSettings = BarsSettingsModel(id: String(describing: type(of: self))) // e.g., "FirstViewController"
+    super.init(coder: aDecoder)
+  }
+
+
   override func viewDidLoad() {
     super.viewDidLoad()
-    barsSettings.persisted = false
-    barsSettings.set(isOn: true, forName: "hideTabBar")
-    barsSettings.set(isOn: true, forName: "hideOnAppear")
     barsSettings.tabBarAttachedView = view.viewWithTag(42)
   }
 
+
+  override func viewWillAppear(_ animated: Bool) {
+    view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(_toggleBars(sender:))))
+  }
+
+  
+  func _toggleBars(sender: UITapGestureRecognizer) {
+    toggleBars()
+  }
 }

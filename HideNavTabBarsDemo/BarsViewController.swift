@@ -23,184 +23,67 @@ import UIKit
 /// Subclasses of `BarsViewController` inherit the ability to hide and show automatically or via user interaction one or both of either the navigation bar and tab bar.
 ///
 /// Which bars can be hidden is controlled by the `BarsSettingsModel` properties `hideNavBar` and `hideTabBar`. How the bars animate on segues is controlled by its `hideOnAppear`, `showOnAppear`, and `autoHideDelay` properties.
-class BarsViewController: UIViewController {
+class BarsViewController: UIViewController, HidingBars {
 
-  /// The keeper of the nav and tab bar hide/show settings.
-  var model: BarsSettingsModel!
+  /// A `HidingBars` protocol property, configures bar behaviors.
+  var barsSettings: BarsSettingsModel
 
-  /// True when the bars are currently hidden; false, otherwise.
-  var barsHidden = false
-
-  /// The tag of the view to animate with the tab bar.
-  var tabBarAttachedViewTag: Int? { return nil }
-
-  /// The means by which the bars are hidden after a delay.
-  private var autoHideTimer: Timer?
-
-  /// When true, the bars hide after the view appears.
-  ///
-  /// Used in conjunction with the `BarModel` property by the same name, this value enables user override of that the model's setting.
-  ///
-  /// If the user explicitly _shows_ the bars when hide-on-appear is enabled, this value is used by `toggleBars(sender:)` to temporarily turn off auto hiding until the user explicitly _hides_ the bars.
-  private var hideOnAppear: Bool!
-
-
-  /// Initializes the settings model with an id unique to `self`.
   required init?(coder aDecoder: NSCoder) {
+    barsSettings = BarsSettingsModel(id: String(describing: type(of: self))) // e.g., "FirstViewController"
     super.init(coder: aDecoder)
-    model = BarsSettingsModel(id: String(describing: type(of: self))) // e.g., "FirstViewController"
   }
 
-
-  //////
-  // MARK: - View setup
 
   /// Establishes self as an observer for `LabelDetailSwitchModelProtocol` (`BarsSettingsModel`) switch value changes.
   override func viewDidLoad() {
     super.viewDidLoad()
-    hideOnAppear = model.hideOnAppear
-    model.add(observer: changedSetting(with:isOn:), forObject: self)
+    barsSettings.add(observer: changedSetting(with:isOn:), forObject: self)
   }
 
 
   /// Displayes the navigation and tab bars in accordance with the `BarsSettingsModel` settings and installs tap gesture recognizer notifications to `toggleBars(sender:)`.
   override func viewWillAppear(_ animated: Bool) {
 
-    if !model.hideTabBar {
+    print("\(#function): model = \(barsSettings)")
+
+    if !barsSettings.hideTabBar {
       setTabBar(hidden: false, animated: false)
     }
-    if !model.hideNavBar {
+    if !barsSettings.hideNavBar {
       setNavBar(hidden: false, animated: true)
     }
-    setBars(hidden: model.showOnAppear ? false : barsHidden, animated: true)
+    setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
 
-    view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggleBars(sender:))))
+    view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(_toggleBars(sender:))))
+  }
+
+  func _toggleBars(sender: UITapGestureRecognizer) {
+    toggleBars()
   }
 
 
   /// Upon dismissal of view, terminates any pending auto-hide timers.
   override func viewWillDisappear(_ animated: Bool) {
-    autoHideTimer?.invalidate()
+    barsSettings.autoHideClosure = nil
   }
 
 
   /// Injects the current `BarsSettingsModel` into the destination `BarsSettingsViewController` and shows the tab bar for use by that view.
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if let destination = segue.destination as? BarsSettingsViewController {
-      destination.model = model
+      destination.barsSettings = barsSettings
     }
     setTabBar(hidden: false, animated: true)
   }
 
 
-  //////
-  // MARK: - Bar Management
-
-  /// In response to a tap gesture, toggles the visibility of the navigation and tab bars in accordance with the `BarsSettingsModel` settings.
-  /// - parameter sender: The tap gesture recognizer.
-  func toggleBars(sender: UITapGestureRecognizer) {
-
-    guard model.hideNavBar || model.hideTabBar else { return }
-
-    // If hide-on-appear is enabled and the user has explicitly shown the bars, turn off auto-hiding until they explicitly hide the bars again.
-    if model.hideOnAppear {
-      hideOnAppear = !barsHidden
-    }
-
-    setBars(hidden: !barsHidden, animated: true)
-  }
-
-
-  /// Shows and hides the navigation and tab bars in accordance with the `BarsSettingsModel` settings.
+  /// As the target action for the `BarsSettingsModel` switch value changes, updates the temporary user-override `hideOnAppear` with that given by the setting.
   ///
-  /// If hide-on-appear is enabled and the bars either are showing or are being shown (`hidden` is `false`), installs the timer to auto-hide after `autoHideDelay`.
-  /// - parameter hidden: When `true`, the bars for which hiding is enabled are hidden; when `false`, hidden bars are un-hidden.
-  /// - parameter animated: When `true`, the hide and show actions are animated; otherwise, they are not.
-  func setBars(hidden: Bool, animated: Bool) {
-
-    // Cancel any auto-hide
-    autoHideTimer?.invalidate()
-
-    // Initiate auto-hide
-    if (!hidden || !barsHidden) && hideOnAppear {
-      if #available(iOS 10.0, *) {
-        autoHideTimer = Timer.scheduledTimer(withTimeInterval: model.autoHideDelay, repeats: false ) { _ in
-          self.setBars(hidden: true, animated: true)
-        }
-      } else {
-        // Fallback on earlier versions
-        autoHideTimer = Timer.scheduledTimer(timeInterval: model.autoHideDelay, target: self, selector: #selector(BarsViewController.hideBars), userInfo: nil, repeats: false)
-      }
-    }
-
-    // Hide/show bars
-    barsHidden = hidden
-    if model.hideNavBar {
-      setNavBar(hidden: hidden, animated: animated)
-    }
-    if model.hideTabBar {
-      setTabBar(hidden: hidden, animated: animated)
-    }
-  }
-
-
-  /// As the target for the auto-hide timer, hides the bars.
-  func hideBars() {
-    // Required for iOS 9.x and earlier (timer accepts a closure in iOS 10).
-    setBars(hidden: true, animated: true)
-  }
-
-
-  /// Shows and hides the navigation bar.
-  /// - parameter hidden: When `true`, the bar is hidden; when `false`, it is shown.
-  /// - parameter animated: When `true`, the hide and show actions are animated; when `false`, they are not.
-  func setNavBar(hidden: Bool, animated: Bool) {
-    navigationController?.setNavigationBarHidden(hidden, animated: true)
-  }
-
-
-  /// Shows and hides the tab bar.
-  /// - parameter hidden: When `true`, the bar is hidden; when `false`, it is shown.
-  /// - parameter animated: When `true`, the hide and show actions are animated; when `false`, they are not.
-  func setTabBar(hidden: Bool, animated: Bool) {
-    // Source: http://stackoverflow.com/a/27072876/4538429
-
-    guard let tabBarController = tabBarController else { return }
-
-    // Bail if the current state matches the desired state
-    let tabBarIsVisible = tabBarController.tabBar.frame.origin.y < self.view.frame.maxY
-    if (tabBarIsVisible != hidden) { return }
-
-    // Get a frame calculation ready
-    let frame = tabBarController.tabBar.frame
-    let height = frame.size.height
-    let offsetY = (hidden ? height : -height)
-
-    // Zero duration means no animation
-    let duration: TimeInterval = (animated ? 0.25 : 0.0)
-
-    // Animate the tabBar
-    UIView.animate(withDuration: duration) {
-      tabBarController.tabBar.frame = frame.offsetBy(dx: 0, dy: offsetY)
-    }
-
-    // Animate tabbar-attached view
-    if let tabBarAttachedViewTag = tabBarAttachedViewTag, let attachedView = view.viewWithTag(tabBarAttachedViewTag) {
-      let currFrame = attachedView.frame
-      let newFrame = currFrame.offsetBy(dx: 0, dy: hidden ? offsetY : 0)
-      UIView.animate(withDuration: duration) {
-        attachedView.frame = newFrame
-      }
-    }
-  }
-
-
-  /// As the target action for the `LabelDetailSwitchModelProtocol` (`BarsSettingsModel`) switch value changes, updates the temporary user-override `hideOnAppear` with that given by the setting.
   /// - parameter name: The identifier for the setting.
   /// - parameter isOn: Mirrors the changed `isOn` value of the corresponding `UISwitch`.
   func changedSetting(with name: String, isOn: Bool) {
-    if name == "hideOnAppear" {
-      hideOnAppear = isOn
-    }
+//    if name == "hideOnAppear" {
+//      barsSettings.set(isOn: isOn, forName: name)
+//    }
   }
 }

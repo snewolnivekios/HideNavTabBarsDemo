@@ -159,7 +159,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   /// Adds the given `observer` closure to the collection of closures that are called when a model switch value changes.
   /// - parameter observer: A closure that receives the setting `name` and switch `isOn` state as arguments.
   /// - parameter object: The object containing `observer`.
-  func add(observer: @escaping SwitchObserver, forObject object: AnyObject) {
+  func add(observer: @escaping SwitchObserver, forObject object: Any) {
     observers[String(describing: type(of: object))] = observer
   }
 }
