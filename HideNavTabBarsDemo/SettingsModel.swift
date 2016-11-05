@@ -38,7 +38,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   /// Maps index paths to their corresponding key in `settings`.
   var settingsPaths: [IndexPath: String] = [:]
 
-  /// When `true`, changes to the settings are persisted, and then restored with each app startup.
+  /// When `true`, changes to the settings are persisted, and then restored with each app startup. Defaults to `true`.
   var persisted = true
 
 
@@ -49,10 +49,10 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   let initialSettingsPlist = "BarsSettings"
 
   /// The property list key that identifies the setting name.
-  let plistNameName = "name"
+  let plistSettingName = "name"
 
   /// The property list key that identifies the table view cell label text for a setting.
-  let plistLabelName = "label"
+  let plistTitleName = "title"
 
   /// The property list key that identifies the table view cell detail text for a setting.
   let plistDetailName = "detail"
@@ -61,7 +61,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   //////
   // MARK: - Initialization
 
-  /// Populates `settingStrings` and `settingsPaths` from the bars settings property list, and initializes all setting states to on.
+  /// Populates `settingStrings` and `settingsPaths` from the bars settings property list, and restores all setting states to their default or persisted states.
   /// - parameter id: A unique identifier that distignuishes one model from another.
   init(id: String) {
     modelId = id
@@ -69,9 +69,9 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
       let initialSettings = NSArray(contentsOfFile: path) as? [[String:String]]
       else { return }
     for (index, setting) in initialSettings.enumerated() {
-      let name = setting[plistNameName]!
-      settingStrings[name] = (label: setting[plistLabelName]!, detail: setting[plistDetailName]!)
-      settingsPaths[IndexPath(row: index, section: 0)] = setting[plistNameName]!
+      let name = setting[plistSettingName]!
+      settingStrings[name] = (label: setting[plistTitleName]!, detail: setting[plistDetailName]!)
+      settingsPaths[IndexPath(row: index, section: 0)] = setting[plistSettingName]!
     }
     restoreSettings()
   }

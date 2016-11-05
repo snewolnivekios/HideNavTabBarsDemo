@@ -5,7 +5,7 @@
 	<dict>
 		<key>name</key>
 		<string>hideNavBar</string>
-		<key>label</key>
+		<key>title</key>
 		<string>Hide Navigation Bar</string>
 		<key>detail</key>
 		<string>When on, the navigation bar can be hidden.</string>
@@ -13,7 +13,7 @@
 	<dict>
 		<key>name</key>
 		<string>hideTabBar</string>
-		<key>label</key>
+		<key>title</key>
 		<string>Hide Tab Bar</string>
 		<key>detail</key>
 		<string>When on, the tab bar can be hidden.</string>
@@ -21,7 +21,7 @@
 	<dict>
 		<key>name</key>
 		<string>hideOnAppear</string>
-		<key>label</key>
+		<key>title</key>
 		<string>Hide Bars on Appear</string>
 		<key>detail</key>
 		<string>When on, bars auto-hide after the view appears.</string>
@@ -29,7 +29,7 @@
 	<dict>
 		<key>name</key>
 		<string>showOnAppear</string>
-		<key>label</key>
+		<key>title</key>
 		<string>Show Bars on Appear</string>
 		<key>detail</key>
 		<string>When on, bars show when returning to the view.</string>

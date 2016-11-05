@@ -83,10 +83,10 @@
 		DCF574371D90EB0C004E5402 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				DC1CF11F1D6FED9E000F3AF7 /* BarsSettings.plist */,
 				DC8F96FE1D8DE31500D14707 /* BarsSettingsModel.swift */,
 				DC1CF11B1D6DCEFA000F3AF7 /* SettingsModel.swift */,
 				DC1CF11D1D6DE788000F3AF7 /* LabelDetailSwitchModelProtocol.swift */,
+				DC1CF11F1D6FED9E000F3AF7 /* BarsSettings.plist */,
 			);
 			name = Model;
 			sourceTree = "<group>";
