@@ -20,19 +20,74 @@
 
 import UIKit
 
-protocol HidingBars {
+// MARK: Protocol HidingBarsSettings
+
+/// A type conforming to this protocol provides configurable items for the `HidingBars` protocol and a mechanism for maintaining state needed for its operation.
+protocol HidingBarsSettings {
+
+  // MARK: Configuration
+
+  /// When `true`, the tab bar can be hidden.
+  var hideTabBar: Bool { get }
+
+  /// When `true`, the navigation bar can be hidden.
+  var hideNavBar: Bool { get }
+
+  /// When `true`, the bars set to hide do so automatically on view-will-appear after an `autoHideDelay`.
+  var hideOnAppear: Bool { get }
+
+  /// When `true`, the bars show on view-will-appear; otherwise, they remain in their last configuration.
+  var showOnAppear: Bool { get }
+
+  /// The delay before the bars are automatically hidden.
+  var autoHideDelay: TimeInterval { get }
+
+  /// The view animated with the tab bar.
+  var tabBarAttachedView: UIView? { get set }
+
+
+  // MARK: State
+
+  /// `true` when the user has manually shown the bars after they were automatically hidden.
+  var autoHideOverride: Bool { get set }
+
+  /// `true` when the bars are currently hidden; `false`, otherwise.
+  var barsHidden: Bool { get set }
+
+  /// Hides the bars if not cancelled before the `autoHideDelay` expires.
+  ///
+  /// Auto-hide is cancelled each time the bars visibility state is toggled, and should also be cancelled by the implementing view controller in response to `viewWillDisappear(_:)`.
+  var autoHideWorkItem: DispatchWorkItem? { get set }
+}
+
+
+// MARK: - Protocol HidingBars
+
+/// A `UIViewController` conforming to this protocol gains the ability to hide and show either or both the navigation and tab bars.
+///
+/// The behavior is configured by an instance of `HidingBarsSettings`.
+///
+/// To utilize this functionality, a conforming view controller must:
+/// 1. Initialize a `HidingBarsSettings` property.
+/// 1. Install a gesture recognizer or other means for the user to toggle the visibility of the bars. Such a recognizer need only call `toggleBars()`.
+/// 1. In both `viewWillAppear(_:)` and `viewWillTransition(to:with:)`, add this line:
+///
+///    `setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)`
+///
+///    where `barsSettings` is the name of the `HidingBarsSettings` instance.
+/// 1. In `viewWillDisappear(_:)`, add a call to `barsSettings.autoHideWorkItem?.cancel()`.
+protocol HidingBars: class {
 
   /// Configures bars behaviors.
-  var barsSettings: BarsSettingsModel { get set }
+  var barsSettings: HidingBarsSettings { get set }
 }
+
 
 extension HidingBars where Self: UIViewController {
 
   /// Toggles the visibility of the navigation and tab bars in accordance with `barsSettings`.
   func toggleBars() {
-    if barsSettings.hideOnAppear {
-      barsSettings.hideOnAppear = !barsSettings.barsHidden
-    }
+    barsSettings.autoHideOverride = barsSettings.barsHidden
     setBars(hidden: !barsSettings.barsHidden, animated: true)
   }
 
@@ -46,17 +101,14 @@ extension HidingBars where Self: UIViewController {
   func setBars(hidden: Bool, animated: Bool) {
 
     // Cancel any auto-hide
-    barsSettings.autoHideClosure = nil
+    barsSettings.autoHideWorkItem?.cancel()
 
     // Initiate auto-hide
-    if (!hidden || !barsSettings.barsHidden) && barsSettings.hideOnAppear {
-      let deadline = DispatchTime.now() + Double(Int64(barsSettings.autoHideDelay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-      barsSettings.autoHideClosure = {
+    if (!hidden || !barsSettings.barsHidden) && !barsSettings.autoHideOverride {
+      barsSettings.autoHideWorkItem = DispatchWorkItem {
         self.setBars(hidden: true, animated: true)
       }
-      DispatchQueue.main.asyncAfter(deadline: deadline) {
-        self.barsSettings.autoHideClosure?()
-      }
+      DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + barsSettings.autoHideDelay, execute: barsSettings.autoHideWorkItem!)
     }
 
     // Hide/show bars
@@ -109,9 +161,7 @@ extension HidingBars where Self: UIViewController {
     if let attachedView = barsSettings.tabBarAttachedView {
       let currFrame = attachedView.frame
       let newFrame = currFrame.offsetBy(dx: 0, dy: hidden ? offsetY : 0)
-      UIView.animate(withDuration: duration) {
-        attachedView.frame = newFrame
-      }
+      UIView.animate(withDuration: duration) { attachedView.frame = newFrame }
     }
   }
 }

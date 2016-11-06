@@ -161,7 +161,7 @@
 				TargetAttributes = {
 					DCD895861D67C7E6001BF9A8 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = VDA563725K;
+						DevelopmentTeam = 22JZKMP4MU;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -337,11 +337,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = VDA563725K;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 22JZKMP4MU;
 				INFOPLIST_FILE = HideNavTabBarsDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.kevinlowens.ios.HideNavTabBarsDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kevinlowens.ios.KeyboardResponsiveDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -351,11 +352,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = VDA563725K;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 22JZKMP4MU;
 				INFOPLIST_FILE = HideNavTabBarsDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.kevinlowens.ios.HideNavTabBarsDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kevinlowens.ios.KeyboardResponsiveDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

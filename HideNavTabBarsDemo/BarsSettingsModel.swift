@@ -20,47 +20,42 @@
 
 import UIKit
 
-/// Adds convenience properties to `SettingsModel` specific to configuring behaviors of the navigation and tab bars.
-class BarsSettingsModel: SettingsModel, CustomStringConvertible {
+/// Conforms `HidingBarsSettings` to a `SettingsModel`, adding a framework for configuration item mutability and persistence.
+class BarsSettingsModel: SettingsModel, HidingBarsSettings, CustomStringConvertible {
 
-  /// When true, the tab bar can be hidden.
+  // MARK: Configuration
+
   var hideTabBar: Bool {
     get { return self.isOn(forName: "\(#function)")! }
     set { set(isOn: newValue, forName: "\(#function)") }
   }
 
-  /// When true, the navigation bar can be hidden.
   var hideNavBar: Bool {
     get { return self.isOn(forName: "\(#function)")! }
     set { set(isOn: newValue, forName: "\(#function)") }
   }
 
-  /// When true, the bars set to hide do so automatically on view-will-appear after an `autoHideDelay`.
   var hideOnAppear: Bool {
     get { return self.isOn(forName: "\(#function)")! }
     set { set(isOn: newValue, forName: "\(#function)") }
   }
 
-  /// When true, the bars show on view-will-appear; otherwise, they remain in their last configuration.
   var showOnAppear: Bool {
     get { return self.isOn(forName: "\(#function)")! }
     set { set(isOn: newValue, forName: "\(#function)") }
   }
 
-  /// The delay before the bars are automatically hidden.
   var autoHideDelay: TimeInterval = 3
 
-  /// The view animated with the tab bar.
-  var tabBarAttachedView: UIView?
-
-  /// True when the bars are currently hidden; false, otherwise.
-  var barsHidden: Bool = false
-
-  /// The means by which the bars are hidden after a delay.
-  var autoHideClosure: (() -> Void)?
-
-
+  /// A string representation of the configuration (non-state) items.
   var description: String {
     return "\(#function): hideNavBar = \(hideNavBar); hideTabBar = \(hideTabBar); showOnAppear = \(showOnAppear); hideOnAppear = \(hideOnAppear); autoHideDelay = \(autoHideDelay)"
   }
+
+  // MARK: State
+
+  var autoHideOverride: Bool = false
+  var tabBarAttachedView: UIView?
+  var barsHidden: Bool = false
+  var autoHideWorkItem: DispatchWorkItem?
 }

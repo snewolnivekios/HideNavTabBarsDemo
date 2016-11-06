@@ -25,27 +25,32 @@ import UIKit
 /// Which bars can be hidden is controlled by the `BarsSettingsModel` properties `hideNavBar` and `hideTabBar`. How the bars animate on segues is controlled by its `hideOnAppear`, `showOnAppear`, and `autoHideDelay` properties.
 class BarsViewController: UIViewController, HidingBars {
 
-  /// A `HidingBars` protocol property, configures bar behaviors.
-  var barsSettings: BarsSettingsModel
+  /// Enables user changes to and persistence of `barsSettings`.
+  var barsSettingsModel: BarsSettingsModel
 
+  /// A `HidingBars` protocol property, configures bar behaviors.
+  var barsSettings: HidingBarsSettings {
+    get { return barsSettingsModel }
+    set { barsSettingsModel = barsSettings as! BarsSettingsModel }
+  }
+
+  /// Initializes the `barsSettingsModel`.
   required init?(coder aDecoder: NSCoder) {
-    barsSettings = BarsSettingsModel(id: String(describing: type(of: self))) // e.g., "FirstViewController"
+    barsSettingsModel = BarsSettingsModel(id: String(describing: type(of: self))) // e.g., "FirstViewController"
     super.init(coder: aDecoder)
   }
 
 
-  /// Establishes self as an observer for `LabelDetailSwitchModelProtocol` (`BarsSettingsModel`) switch value changes.
+  /// Establishes self as an observer for changes to `barsSettingsModel` values.
   override func viewDidLoad() {
     super.viewDidLoad()
-    barsSettings.add(observer: changedSetting(with:isOn:), forObject: self)
+    barsSettingsModel.add(observer: changedSetting(with:isOn:), forObject: self)
   }
 
 
   /// Displayes the navigation and tab bars in accordance with the `BarsSettingsModel` settings and installs tap gesture recognizer notifications to `toggleBars(sender:)`.
   override func viewWillAppear(_ animated: Bool) {
-
-    print("\(#function): model = \(barsSettings)")
-
+    
     if !barsSettings.hideTabBar {
       setTabBar(hidden: false, animated: false)
     }
@@ -57,21 +62,31 @@ class BarsViewController: UIViewController, HidingBars {
     view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(_toggleBars(sender:))))
   }
 
-  func _toggleBars(sender: UITapGestureRecognizer) {
-    toggleBars()
+
+  /// Makes the bars visible when the device rotates, auto-hiding in accordance with the auto-hide setting.
+  override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    if tabBarController?.selectedViewController == self.parent {
+      setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
+    }
   }
 
 
-  /// Upon dismissal of view, terminates any pending auto-hide timers.
+  /// Cancels any pending auto-hide timers.
   override func viewWillDisappear(_ animated: Bool) {
-    barsSettings.autoHideClosure = nil
+    barsSettings.autoHideWorkItem?.cancel()
+  }
+
+
+  /// Toggles the bars visibility in response to a tap gesture.
+  func _toggleBars(sender: UITapGestureRecognizer) {
+    toggleBars()
   }
 
 
   /// Injects the current `BarsSettingsModel` into the destination `BarsSettingsViewController` and shows the tab bar for use by that view.
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if let destination = segue.destination as? BarsSettingsViewController {
-      destination.barsSettings = barsSettings
+      destination.barsSettingsModel = barsSettingsModel
     }
     setTabBar(hidden: false, animated: true)
   }

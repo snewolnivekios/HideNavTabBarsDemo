@@ -25,13 +25,15 @@ import UIKit
 /// Customizations include disabling persistence and defaulting the settings to hide-navigatino-bar: on; hide-tab-bar: off; hide-on-appear: off; show-on-appear: on.
 class FirstViewController: BarsViewController {
 
+  /// The view that animates with the tab bar.
+  @IBOutlet weak var tabBarAttachedView: UIView!
+
   /// Sets non-default navigation and tab bar behavior.
   override func viewDidLoad() {
     super.viewDidLoad()
-    barsSettings.persisted = false
-    barsSettings.set(isOn: true, forName: "hideTabBar")
-    barsSettings.set(isOn: true, forName: "hideOnAppear")
-    barsSettings.tabBarAttachedView = view.viewWithTag(42)
+    barsSettingsModel.persisted = false
+    barsSettingsModel.set(isOn: true, forName: "hideTabBar")
+    barsSettingsModel.set(isOn: true, forName: "hideOnAppear")
+    barsSettings.tabBarAttachedView = tabBarAttachedView
   }
-
 }
