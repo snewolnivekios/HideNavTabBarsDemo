@@ -52,6 +52,7 @@ class ThirdViewController: UIViewController, HidingBars {
 
   /// Shows the bars if `showOnAppear` is enabled; otherwise, shows them according to their last `barsHidden` state.
   override func viewWillAppear(_ animated: Bool) {
+    barsSettings.autoHideOverride = false
     setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
   }
 

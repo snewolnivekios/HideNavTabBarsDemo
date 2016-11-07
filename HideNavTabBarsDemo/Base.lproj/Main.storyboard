@@ -177,19 +177,30 @@
                                     <segment title="Second"/>
                                 </segments>
                             </segmentedControl>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This view has no user-customizable bars behavior." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qUd-5R-jmE">
-                                <rect key="frame" x="24.5" y="325" width="326" height="17"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="JTQ-z7-CgG">
+                                <rect key="frame" x="20" y="311.5" width="335.5" height="44"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap view to change bars visibility." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bt0-rl-gLU">
+                                        <rect key="frame" x="59.5" y="0.0" width="216" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(This view has no user-customizable bars behavior.)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qUd-5R-jmE">
+                                        <rect key="frame" x="0.0" y="27" width="335.5" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="JTQ-z7-CgG" firstAttribute="centerY" secondItem="hdm-wZ-D18" secondAttribute="centerY" id="GNz-l7-dxT"/>
+                            <constraint firstItem="JTQ-z7-CgG" firstAttribute="centerX" secondItem="hdm-wZ-D18" secondAttribute="centerX" id="ILp-Yg-Pac"/>
                             <constraint firstItem="d0B-fW-uUy" firstAttribute="leading" secondItem="hdm-wZ-D18" secondAttribute="leadingMargin" id="RUC-5N-DGT"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="d0B-fW-uUy" secondAttribute="bottom" constant="57" identifier="av" id="VqF-Ge-0Ug"/>
-                            <constraint firstItem="qUd-5R-jmE" firstAttribute="centerY" secondItem="hdm-wZ-D18" secondAttribute="centerY" id="hLJ-Pc-85a"/>
-                            <constraint firstItem="qUd-5R-jmE" firstAttribute="centerX" secondItem="hdm-wZ-D18" secondAttribute="centerX" id="kDp-qJ-cnL"/>
+                            <constraint firstItem="908-SH-a06" firstAttribute="top" secondItem="d0B-fW-uUy" secondAttribute="bottom" constant="8" id="dEB-cf-nYD"/>
                             <constraint firstItem="NaS-1j-4ns" firstAttribute="top" secondItem="BH9-jT-ppj" secondAttribute="bottom" constant="8" symbolic="YES" id="mcH-CE-wt9"/>
                             <constraint firstItem="908-SH-a06" firstAttribute="top" secondItem="d0B-fW-uUy" secondAttribute="bottom" constant="8" id="nRm-95-rTi"/>
                             <constraint firstItem="NaS-1j-4ns" firstAttribute="leading" secondItem="d0B-fW-uUy" secondAttribute="leading" id="nuB-wT-BgW"/>

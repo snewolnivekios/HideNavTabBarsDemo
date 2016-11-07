@@ -42,7 +42,7 @@ protocol HidingBarsSettings {
   /// The delay before the bars are automatically hidden.
   var autoHideDelay: TimeInterval { get }
 
-  /// The view animated with the tab bar.
+  /// The view animated with the tab bar. This view may be constrained either to the bottom layout guide or the bottom edge of the view.
   var tabBarAttachedView: UIView? { get set }
 
 
@@ -68,13 +68,14 @@ protocol HidingBarsSettings {
 /// The behavior is configured by an instance of `HidingBarsSettings`.
 ///
 /// To utilize this functionality, a conforming view controller must:
-/// 1. Initialize a `HidingBarsSettings` property.
+/// 1. Initialize a `HidingBarsSettings` property, optionally including the `tabBarAttachedView`. If you specify this view, it may have its bottom edge constrained either to the view or the bottom layout guide.
 /// 1. Install a gesture recognizer or other means for the user to toggle the visibility of the bars. Such a recognizer need only call `toggleBars()`.
+/// 1. In `viewWillAppear(_:)`, add the assignment `barsSettings.autoHideOverride = false`.
 /// 1. In both `viewWillAppear(_:)` and `viewWillTransition(to:with:)`, add this line:
 ///
 ///    `setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)`
 ///
-///    where `barsSettings` is the name of the `HidingBarsSettings` instance.
+///    where `barsSettings` is the name of the `HidingBarsSettings` instance. This causes the bars to be shown when the view appears or the device rotates, and to autohide if so configured.
 /// 1. In `viewWillDisappear(_:)`, add a call to `barsSettings.autoHideWorkItem?.cancel()`.
 protocol HidingBars: class {
 
@@ -104,7 +105,7 @@ extension HidingBars where Self: UIViewController {
     barsSettings.autoHideWorkItem?.cancel()
 
     // Initiate auto-hide
-    if (!hidden || !barsSettings.barsHidden) && !barsSettings.autoHideOverride {
+    if barsSettings.hideOnAppear && !barsSettings.autoHideOverride && (!hidden || !barsSettings.barsHidden) {
       barsSettings.autoHideWorkItem = DispatchWorkItem {
         self.setBars(hidden: true, animated: true)
       }
