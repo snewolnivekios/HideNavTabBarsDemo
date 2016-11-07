@@ -24,7 +24,7 @@ import UIKit
 class ThirdViewController: UIViewController, HidingBars {
 
   /// The settings required by the `HidingBars` protocol.
-  struct MyBarsSettings: HidingBarsSettings {
+  struct DefaultBarsSettings: HidingBarsSettings {
 
     // Configuration
     var hideTabBar = true
@@ -40,33 +40,34 @@ class ThirdViewController: UIViewController, HidingBars {
     var autoHideWorkItem: DispatchWorkItem?
   }
 
-  /// A `HidingBars` protocol property, configures bar behaviors and installs a gesture recognizer to toggle hiding/showing of the bars.
-  var barsSettings: HidingBarsSettings = MyBarsSettings()
+  /// A `HidingBars` protocol property, configures bar behaviors.
+  var barsSettings: HidingBarsSettings = DefaultBarsSettings()
+
 
   /// Assigns the view to animate with the tab bar.
   override func viewDidLoad() {
     super.viewDidLoad()
-    barsSettings.tabBarAttachedView = view.viewWithTag(42) // could instead assign via IBOutlet
-    view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(_toggleBars(sender:))))
+    updateBars(for: .viewDidLoad(attachedView: view.viewWithTag(42), recognizer: UITapGestureRecognizer(target: self, action: #selector(_toggleBars(sender:)))))
   }
+
 
   /// Shows the bars if `showOnAppear` is enabled; otherwise, shows them according to their last `barsHidden` state.
   override func viewWillAppear(_ animated: Bool) {
-    barsSettings.autoHideOverride = false
-    setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
+    updateBars(for: .viewWillAppear)
   }
+
 
   /// Makes the bars visible when the device rotates, auto-hiding in accordance with the auto-hide setting.
   override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-    if tabBarController?.selectedViewController == self.parent {
-      setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
-    }
+    updateBars(for: .viewWillTransition)
   }
+
 
   /// Cancels any pending auto-hide timers.
   override func viewWillDisappear(_ animated: Bool) {
-    barsSettings.autoHideWorkItem?.cancel()
+    updateBars(for: .viewWillDisappear)
   }
+
 
   /// In response to a tap gesture, hides/shows the bars.
   func _toggleBars(sender: UITapGestureRecognizer) {

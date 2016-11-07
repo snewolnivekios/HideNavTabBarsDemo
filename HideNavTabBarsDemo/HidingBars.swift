@@ -61,6 +61,25 @@ protocol HidingBarsSettings {
 }
 
 
+/// Associates `HidingBars` configurations with `UIViewController` events. Call `updateBars(for:)` in the view controller method corresponding to each event.
+enum HidingBarsEvent {
+
+  /// To be called on `viewDidLoad(_:)`, "attaches" the given view (if provided) to the tab bar and installs the gesture recognizer (if provided) for toggling the bars visibility.
+  ///
+  /// The attachedView needs to have its bottom edge constrained either to the view or the bottom layout guide.
+  case viewDidLoad(attachedView: UIView?, recognizer: UIGestureRecognizer?)
+
+  /// To be called on `viewWillAppear(_:)`, resets any bars auto-hide override the user set by explicitly showing the bars, and shows the bars if `showOnAppear` is enabled; otherwise, shows the bars according to their last `barsHidden` state.
+  case viewWillAppear
+
+  /// To be called on `viewWillTransition(to:with:)`, makes the bars visible when the device rotates, auto-hiding in accordance with the `hideOnAppear` setting.
+  case viewWillTransition
+
+  /// To be called on `viewWillDisappear(_:)`, cancels any pending auto-hide.
+  case viewWillDisappear
+}
+
+
 // MARK: - Protocol HidingBars
 
 /// A `UIViewController` conforming to this protocol gains the ability to hide and show either or both the navigation and tab bars.
@@ -68,15 +87,11 @@ protocol HidingBarsSettings {
 /// The behavior is configured by an instance of `HidingBarsSettings`.
 ///
 /// To utilize this functionality, a conforming view controller must:
-/// 1. Initialize a `HidingBarsSettings` property, optionally including the `tabBarAttachedView`. If you specify this view, it may have its bottom edge constrained either to the view or the bottom layout guide.
-/// 1. Install a gesture recognizer or other means for the user to toggle the visibility of the bars. Such a recognizer need only call `toggleBars()`.
-/// 1. In `viewWillAppear(_:)`, add the assignment `barsSettings.autoHideOverride = false`.
-/// 1. In both `viewWillAppear(_:)` and `viewWillTransition(to:with:)`, add this line:
-///
-///    `setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)`
-///
-///    where `barsSettings` is the name of the `HidingBarsSettings` instance. This causes the bars to be shown when the view appears or the device rotates, and to autohide if so configured.
-/// 1. In `viewWillDisappear(_:)`, add a call to `barsSettings.autoHideWorkItem?.cancel()`.
+/// 1. Initialize a `HidingBarsSettings` property.
+/// 1. In `viewDidLoad(_:)`, optionally call `updateBars(for: .viewDidLoad(attachedView:recognizer:))`.
+/// 1. In `viewWillAppear(_:)`, call `updateBars(for: .viewWillAppear)`.
+/// 1. In `viewWillTransition(to:with:)`, call `updateBars(for: .viewWillTransition)`.
+/// 1. In `viewWillDisappear(_:)`, call `updateBars(for: .viewWillDisappear)`.
 protocol HidingBars: class {
 
   /// Configures bars behaviors.
@@ -85,6 +100,29 @@ protocol HidingBars: class {
 
 
 extension HidingBars where Self: UIViewController {
+
+  /// Performs bars configurations for each `HidingBarsEvent`. Call this method in the corresponding view controller method.
+  func updateBars(for event: HidingBarsEvent) {
+    switch event {
+    case let .viewDidLoad(attachedView, recognizer):
+      if let attachedView = attachedView {
+        barsSettings.tabBarAttachedView = attachedView
+      }
+      if let recognizer = recognizer {
+        view.addGestureRecognizer(recognizer)
+      }
+    case .viewWillAppear:
+      barsSettings.autoHideOverride = false
+      setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
+    case .viewWillTransition:
+      if tabBarController?.selectedViewController == self.parent {
+        setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
+      }
+    case .viewWillDisappear:
+      barsSettings.autoHideWorkItem?.cancel()
+    }
+  }
+
 
   /// Toggles the visibility of the navigation and tab bars in accordance with `barsSettings`.
   func toggleBars() {

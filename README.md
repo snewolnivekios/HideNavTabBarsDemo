@@ -2,7 +2,7 @@
 
 This accompanies the blog post at http://ios.kevinlowens.com/hide-bars/.
 
-Current as of Swift 3 Xcode 8.1.
+Current as of Swift 3 Xcode 8.1; supports iOS 9.3 and later.
 
 ### Demonstrates:
 This project demonstrates hiding and showing (and time-delay hiding) of a navigation bar and/or tab bar and tab bar-"attached" view, with configurable behaviors controlling which bars hide, and whether they auto-hide and auto-show.
