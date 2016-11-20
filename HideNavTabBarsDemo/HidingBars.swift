@@ -73,7 +73,9 @@ enum HidingBarsEvent {
   case viewWillAppear
 
   /// To be called on `viewWillTransition(to:with:)`, makes the bars visible when the device rotates, auto-hiding in accordance with the `hideOnAppear` setting.
-  case viewWillTransition
+  ///
+  /// `toSize` is that given in the `UIViewController.viewWillTransition(to:with:)` notification.
+  case viewWillTransition(toSize: CGSize)
 
   /// To be called on `viewWillDisappear(_:)`, cancels any pending auto-hide.
   case viewWillDisappear
@@ -104,6 +106,7 @@ extension HidingBars where Self: UIViewController {
   /// Performs bars configurations for each `HidingBarsEvent`. Call this method in the corresponding view controller method.
   func updateBars(for event: HidingBarsEvent) {
     switch event {
+
     case let .viewDidLoad(attachedView, recognizer):
       if let attachedView = attachedView {
         barsSettings.tabBarAttachedView = attachedView
@@ -111,16 +114,20 @@ extension HidingBars where Self: UIViewController {
       if let recognizer = recognizer {
         view.addGestureRecognizer(recognizer)
       }
+
     case .viewWillAppear:
       barsSettings.autoHideOverride = false
       setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
-    case .viewWillTransition:
+
+    case .viewWillTransition(let toSize):
+      guard view.frame.size != toSize else { return } // Skip if 180° rotation
       let myTabBarController: UIViewController = self.parent is UINavigationController ? self.parent! : self // tab bar view controller may be a UIViewController or UINavigationController
       if tabBarController?.selectedViewController == myTabBarController {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) { // since this is a will-transition, need to allow time for the view frames to update
           self.setBars(hidden: self.barsSettings.showOnAppear ? false : self.barsSettings.barsHidden, animated: true)
         }
       }
+
     case .viewWillDisappear:
       barsSettings.autoHideWorkItem?.cancel()
     }
@@ -145,14 +152,6 @@ extension HidingBars where Self: UIViewController {
     // Cancel any auto-hide
     barsSettings.autoHideWorkItem?.cancel()
 
-    // Initiate auto-hide
-    if barsSettings.hideOnAppear && !barsSettings.autoHideOverride && (!hidden || !barsSettings.barsHidden) {
-      barsSettings.autoHideWorkItem = DispatchWorkItem {
-        self.setBars(hidden: true, animated: true)
-      }
-      DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + barsSettings.autoHideDelay, execute: barsSettings.autoHideWorkItem!)
-    }
-
     // Hide/show bars
     barsSettings.barsHidden = hidden
     if barsSettings.hideNavBar {
@@ -160,6 +159,14 @@ extension HidingBars where Self: UIViewController {
     }
     if barsSettings.hideTabBar {
       setTabBar(hidden: hidden, animated: animated)
+    }
+
+    // If bars are showing, initiate auto-hide if feature is enabled and not overriden by user explicilty showing them
+    if !hidden && barsSettings.hideOnAppear && !barsSettings.autoHideOverride {
+      barsSettings.autoHideWorkItem = DispatchWorkItem {
+        self.setBars(hidden: true, animated: true)
+      }
+      DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + barsSettings.autoHideDelay, execute: barsSettings.autoHideWorkItem!)
     }
   }
 
@@ -191,14 +198,14 @@ extension HidingBars where Self: UIViewController {
 
     // Position the tabbar-attached view
     if let attachedView = barsSettings.tabBarAttachedView {
-      let newFrame = attachedView.frame.offsetBy(dx: 0, dy: hidden ? offsetY : 0)
+      let attachedViewFrame = attachedView.frame.offsetBy(dx: 0, dy: hidden ? offsetY : 0)
       UIView.animate(withDuration: animationDuration) {
-        attachedView.frame = newFrame
+        attachedView.frame = attachedViewFrame
       }
     }
 
     // Reposition the tabBar if the current state does not match the to state
-    let tabBarIsVisible = tabBarController.tabBar.frame.origin.y < self.view.frame.maxY
+    let tabBarIsVisible = tabBarFrame.origin.y < self.view.frame.maxY
     if tabBarIsVisible == hidden {
       let newFrame = tabBarFrame.offsetBy(dx: 0, dy: offsetY)
       UIView.animate(withDuration: animationDuration) {

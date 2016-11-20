@@ -59,7 +59,7 @@ class ThirdViewController: UIViewController, HidingBars {
 
   /// Makes the bars visible when the device rotates, auto-hiding in accordance with the auto-hide setting.
   override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-    updateBars(for: .viewWillTransition)
+    updateBars(for: .viewWillTransition(toSize: size))
   }
 
 
