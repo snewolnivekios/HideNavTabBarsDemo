@@ -115,8 +115,11 @@ extension HidingBars where Self: UIViewController {
       barsSettings.autoHideOverride = false
       setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
     case .viewWillTransition:
-      if tabBarController?.selectedViewController == self.parent {
-        setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
+      let myTabBarController: UIViewController = self.parent is UINavigationController ? self.parent! : self // tab bar view controller may be a UIViewController or UINavigationController
+      if tabBarController?.selectedViewController == myTabBarController {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) { // since this is a will-transition, need to allow time for the view frames to update
+          self.setBars(hidden: self.barsSettings.showOnAppear ? false : self.barsSettings.barsHidden, animated: true)
+        }
       }
     case .viewWillDisappear:
       barsSettings.autoHideWorkItem?.cancel()
@@ -175,32 +178,32 @@ extension HidingBars where Self: UIViewController {
   /// - parameter hidden: When `true`, the bar is hidden; when `false`, it is shown.
   /// - parameter animated: When `true`, the hide and show actions are animated; when `false`, they are not.
   func setTabBar(hidden: Bool, animated: Bool) {
-    // Source: http://stackoverflow.com/a/27072876/4538429
+    // Inspiration: http://stackoverflow.com/a/27072876/4538429
 
     guard let tabBarController = tabBarController else { return }
 
-    // Bail if the current state matches the desired state
-    let tabBarIsVisible = tabBarController.tabBar.frame.origin.y < self.view.frame.maxY
-    if (tabBarIsVisible != hidden) { return }
-
     // Get a frame calculation ready
-    let frame = tabBarController.tabBar.frame
-    let height = frame.size.height
+    let tabBarFrame = tabBarController.tabBar.frame
+    let height = tabBarFrame.size.height
     let offsetY = (hidden ? height : -height)
 
-    // Zero duration means no animation
-    let duration: TimeInterval = (animated ? 0.25 : 0.0)
+    let animationDuration: TimeInterval = (animated ? 0.25 : 0.0)
 
-    // Animate the tabBar
-    UIView.animate(withDuration: duration) {
-      tabBarController.tabBar.frame = frame.offsetBy(dx: 0, dy: offsetY)
+    // Position the tabbar-attached view
+    if let attachedView = barsSettings.tabBarAttachedView {
+      let newFrame = attachedView.frame.offsetBy(dx: 0, dy: hidden ? offsetY : 0)
+      UIView.animate(withDuration: animationDuration) {
+        attachedView.frame = newFrame
+      }
     }
 
-    // Animate tabbar-attached view
-    if let attachedView = barsSettings.tabBarAttachedView {
-      let currFrame = attachedView.frame
-      let newFrame = currFrame.offsetBy(dx: 0, dy: hidden ? offsetY : 0)
-      UIView.animate(withDuration: duration) { attachedView.frame = newFrame }
+    // Reposition the tabBar if the current state does not match the to state
+    let tabBarIsVisible = tabBarController.tabBar.frame.origin.y < self.view.frame.maxY
+    if tabBarIsVisible == hidden {
+      let newFrame = tabBarFrame.offsetBy(dx: 0, dy: offsetY)
+      UIView.animate(withDuration: animationDuration) {
+        tabBarController.tabBar.frame = newFrame
+      }
     }
   }
 }
