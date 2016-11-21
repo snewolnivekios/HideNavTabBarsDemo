@@ -94,6 +94,7 @@ enum HidingBarsEvent {
 /// 1. In `viewWillAppear(_:)`, call `updateBars(for: .viewWillAppear)`.
 /// 1. In `viewWillTransition(to:with:)`, call `updateBars(for: .viewWillTransition)`.
 /// 1. In `viewWillDisappear(_:)`, call `updateBars(for: .viewWillDisappear)`.
+/// 1. If using a container view for the tab-bar-attached view, set `HidingBarsAttachedView` as its class so it doesn't capture touch events.
 protocol HidingBars: class {
 
   /// Configures bars behaviors.
@@ -117,7 +118,7 @@ extension HidingBars where Self: UIViewController {
 
     case .viewWillAppear:
       barsSettings.autoHideOverride = false
-      setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
+      setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: false)
 
     case .viewWillTransition(let toSize):
       guard view.frame.size != toSize else { return } // Skip if 180° rotation
@@ -195,22 +196,41 @@ extension HidingBars where Self: UIViewController {
     let offsetY = (hidden ? height : -height)
 
     let animationDuration: TimeInterval = (animated ? 0.25 : 0.0)
+    let tabBarIsVisible = tabBarFrame.origin.y < self.view.frame.maxY
 
     // Position the tabbar-attached view
     if let attachedView = barsSettings.tabBarAttachedView {
-      let attachedViewFrame = attachedView.frame.offsetBy(dx: 0, dy: hidden ? offsetY : 0)
+      // If showing tab bar, don't account for tab bar movement if it's already visible or if nav bar was also hidden. In the latter case, the downward movement of the main view in response to the appearing nav bar results has a -offsetY effect.
+      let offsetY = !hidden && (tabBarIsVisible || barsSettings.hideNavBar) ? 0 : offsetY
+      let attachedViewFrame = attachedView.frame.offsetBy(dx: 0, dy: offsetY)
       UIView.animate(withDuration: animationDuration) {
         attachedView.frame = attachedViewFrame
       }
     }
 
     // Reposition the tabBar if the current state does not match the to state
-    let tabBarIsVisible = tabBarFrame.origin.y < self.view.frame.maxY
     if tabBarIsVisible == hidden {
       let newFrame = tabBarFrame.offsetBy(dx: 0, dy: offsetY)
       UIView.animate(withDuration: animationDuration) {
         tabBarController.tabBar.frame = newFrame
       }
     }
+  }
+}
+
+
+/// Causes any touch event hits resolving to `self` to be ignored, allowing any superviews or subviews to process touch points.
+///
+/// In using with `HidingBars`, apply to a tab-bar-attached `UIView` that serves only as a container for other views.
+class HidingBarsAttachedView: UIView {
+
+  /// Returns the farthest descendant of the receiver in the view hierarchy (excluding `self`) that contains a specified point.
+  ///
+  /// - parameter point: A point specified in the receiver’s local coordinate system (bounds).
+  /// - parameter: The event that warranted a call to this method. If you are calling this method from outside your event-handling code, you may specify nil.
+  /// - returns: The view object that is the farthest descendent of the current view and contains `point`. Returns `nil` if the point lies in `self` or completely outside its view hierarchy.
+  override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    let hitView = super.hitTest(point, with: event)
+    return hitView == self ? nil : hitView
   }
 }
