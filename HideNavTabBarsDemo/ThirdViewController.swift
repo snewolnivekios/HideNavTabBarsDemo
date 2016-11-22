@@ -31,8 +31,9 @@ class ThirdViewController: UIViewController, HidingBars {
     var hideNavBar = true
     var hideOnAppear = true
     var showOnAppear = true
-    var autoHideDelay: TimeInterval = 3
+    var autoHideDelay: TimeInterval? = 3
     var tabBarAttachedView: UIView?
+    var tabBarAttachedViewGap: CGFloat = 5
 
     // State
     var autoHideOverride = false

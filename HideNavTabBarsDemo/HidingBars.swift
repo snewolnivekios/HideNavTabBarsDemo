@@ -1,88 +1,24 @@
 //
 //  HidingBars.swift
-//  HideNavTabBarsDemo
 //
 //  Copyright © 2016 Kevin L. Owens. All rights reserved.
 //
-//  HideNavTabBarsDemo is free software: you can redistribute it and/or modify
+//  HidingBars is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
-//  HideNavTabBarsDemo is distributed in the hope that it will be useful,
+//  HidingBars is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with HideNavTabBarsDemo.  If not, see <http://www.gnu.org/licenses/>.
+//  along with HidingBars.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import UIKit
 
-// MARK: Protocol HidingBarsSettings
-
-/// A type conforming to this protocol provides configurable items for the `HidingBars` protocol and a mechanism for maintaining state needed for its operation.
-protocol HidingBarsSettings {
-
-  // MARK: Configuration
-
-  /// When `true`, the tab bar can be hidden.
-  var hideTabBar: Bool { get }
-
-  /// When `true`, the navigation bar can be hidden.
-  var hideNavBar: Bool { get }
-
-  /// When `true`, the bars set to hide do so automatically on view-will-appear after an `autoHideDelay`.
-  var hideOnAppear: Bool { get }
-
-  /// When `true`, the bars show on view-will-appear; otherwise, they remain in their last configuration.
-  var showOnAppear: Bool { get }
-
-  /// The delay before the bars are automatically hidden.
-  var autoHideDelay: TimeInterval { get }
-
-  /// The view animated with the tab bar. This view may be constrained either to the bottom layout guide or the bottom edge of the view.
-  var tabBarAttachedView: UIView? { get set }
-
-
-  // MARK: State
-
-  /// `true` when the user has manually shown the bars after they were automatically hidden.
-  var autoHideOverride: Bool { get set }
-
-  /// `true` when the bars are currently hidden; `false`, otherwise.
-  var barsHidden: Bool { get set }
-
-  /// Hides the bars if not cancelled before the `autoHideDelay` expires.
-  ///
-  /// Auto-hide is cancelled each time the bars visibility state is toggled, and should also be cancelled by the implementing view controller in response to `viewWillDisappear(_:)`.
-  var autoHideWorkItem: DispatchWorkItem? { get set }
-}
-
-
-/// Associates `HidingBars` configurations with `UIViewController` events. Call `updateBars(for:)` in the view controller method corresponding to each event.
-enum HidingBarsEvent {
-
-  /// To be called on `viewDidLoad(_:)`, "attaches" the given view (if provided) to the tab bar and installs the gesture recognizer (if provided) for toggling the bars visibility.
-  ///
-  /// The attachedView needs to have its bottom edge constrained either to the view or the bottom layout guide.
-  case viewDidLoad(attachedView: UIView?, recognizer: UIGestureRecognizer?)
-
-  /// To be called on `viewWillAppear(_:)`, resets any bars auto-hide override the user set by explicitly showing the bars, and shows the bars if `showOnAppear` is enabled; otherwise, shows the bars according to their last `barsHidden` state.
-  case viewWillAppear
-
-  /// To be called on `viewWillTransition(to:with:)`, makes the bars visible when the device rotates, auto-hiding in accordance with the `hideOnAppear` setting.
-  ///
-  /// `toSize` is that given in the `UIViewController.viewWillTransition(to:with:)` notification.
-  case viewWillTransition(toSize: CGSize)
-
-  /// To be called on `viewWillDisappear(_:)`, cancels any pending auto-hide.
-  case viewWillDisappear
-}
-
-
-// MARK: - Protocol HidingBars
 
 /// A `UIViewController` conforming to this protocol gains the ability to hide and show either or both the navigation and tab bars.
 ///
@@ -92,15 +28,15 @@ enum HidingBarsEvent {
 /// 1. Initialize a `HidingBarsSettings` property.
 /// 1. In `viewDidLoad(_:)`, optionally call `updateBars(for: .viewDidLoad(attachedView:recognizer:))`.
 /// 1. In `viewWillAppear(_:)`, call `updateBars(for: .viewWillAppear)`.
-/// 1. In `viewWillTransition(to:with:)`, call `updateBars(for: .viewWillTransition)`.
+/// 1. In `viewWillTransition(to:with:)`, call `updateBars(for: .viewWillTransition(toSize:))`.
+/// 1. In `viewWillLayoutSubviews()`, call `updateBars(for: .viewWillLayoutSubviews)`.
 /// 1. In `viewWillDisappear(_:)`, call `updateBars(for: .viewWillDisappear)`.
-/// 1. If using a container view for the tab-bar-attached view, set `HidingBarsAttachedView` as its class so it doesn't capture touch events.
+
 protocol HidingBars: class {
 
   /// Configures bars behaviors.
   var barsSettings: HidingBarsSettings { get set }
 }
-
 
 extension HidingBars where Self: UIViewController {
 
@@ -124,10 +60,11 @@ extension HidingBars where Self: UIViewController {
       guard view.frame.size != toSize else { return } // Skip if 180° rotation
       let myTabBarController: UIViewController = self.parent is UINavigationController ? self.parent! : self // tab bar view controller may be a UIViewController or UINavigationController
       if tabBarController?.selectedViewController == myTabBarController {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) { // since this is a will-transition, need to allow time for the view frames to update
-          self.setBars(hidden: self.barsSettings.showOnAppear ? false : self.barsSettings.barsHidden, animated: true)
-        }
+        setBars(hidden: barsSettings.showOnAppear ? false : barsSettings.barsHidden, animated: true)
       }
+
+    case .viewWillLayoutSubviews:
+      setBars(hidden: barsSettings.barsHidden, animated: false)
 
     case .viewWillDisappear:
       barsSettings.autoHideWorkItem?.cancel()
@@ -159,15 +96,17 @@ extension HidingBars where Self: UIViewController {
       setNavBar(hidden: hidden, animated: animated)
     }
     if barsSettings.hideTabBar {
-      setTabBar(hidden: hidden, animated: animated)
+      DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) { // allow time for view frames to update
+        self.setTabBar(hidden: hidden, animated: animated)
+      }
     }
 
     // If bars are showing, initiate auto-hide if feature is enabled and not overriden by user explicilty showing them
-    if !hidden && barsSettings.hideOnAppear && !barsSettings.autoHideOverride {
+    if !hidden && barsSettings.autoHideDelay != nil && !barsSettings.autoHideOverride {
       barsSettings.autoHideWorkItem = DispatchWorkItem {
         self.setBars(hidden: true, animated: true)
       }
-      DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + barsSettings.autoHideDelay, execute: barsSettings.autoHideWorkItem!)
+      DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + barsSettings.autoHideDelay!, execute: barsSettings.autoHideWorkItem!)
     }
   }
 
@@ -191,31 +130,93 @@ extension HidingBars where Self: UIViewController {
     guard let tabBarController = tabBarController else { return }
 
     // Get a frame calculation ready
-    let tabBarFrame = tabBarController.tabBar.frame
-    let height = tabBarFrame.size.height
-    let offsetY = (hidden ? height : -height)
+    var tabBarFrame = tabBarController.tabBar.frame
+    let offsetY = (hidden ? 1 : -1) * tabBarFrame.size.height
 
     let animationDuration: TimeInterval = (animated ? 0.25 : 0.0)
     let tabBarIsVisible = tabBarFrame.origin.y < self.view.frame.maxY
 
+    // Reposition the tabBar if the current state does not match the to state
+    if tabBarIsVisible == hidden {
+      tabBarFrame = tabBarFrame.offsetBy(dx: 0, dy: offsetY)
+      UIView.animate(withDuration: animationDuration) {
+        tabBarController.tabBar.frame = tabBarFrame
+      }
+    }
+
     // Position the tabbar-attached view
     if let attachedView = barsSettings.tabBarAttachedView {
-      // If showing tab bar, don't account for tab bar movement if it's already visible or if nav bar was also hidden. In the latter case, the downward movement of the main view in response to the appearing nav bar results has a -offsetY effect.
-      let offsetY = !hidden && (tabBarIsVisible || barsSettings.hideNavBar) ? 0 : offsetY
-      let attachedViewFrame = attachedView.frame.offsetBy(dx: 0, dy: offsetY)
+      let y = tabBarFrame.origin.y - barsSettings.tabBarAttachedViewGap - attachedView.frame.size.height
+      var attachedViewFrame = attachedView.frame
+      attachedViewFrame.origin.y = y
       UIView.animate(withDuration: animationDuration) {
         attachedView.frame = attachedViewFrame
       }
     }
-
-    // Reposition the tabBar if the current state does not match the to state
-    if tabBarIsVisible == hidden {
-      let newFrame = tabBarFrame.offsetBy(dx: 0, dy: offsetY)
-      UIView.animate(withDuration: animationDuration) {
-        tabBarController.tabBar.frame = newFrame
-      }
-    }
   }
+}
+
+
+/// A type conforming to this protocol provides configurable items for the `HidingBars` protocol and a mechanism for maintaining state needed for its operation.
+protocol HidingBarsSettings {
+
+  // MARK: Configuration
+
+  /// When `true`, the tab bar can be hidden.
+  var hideTabBar: Bool { get }
+
+  /// When `true`, the navigation bar can be hidden.
+  var hideNavBar: Bool { get }
+
+  /// When `true`, the bars show on view-will-appear and will-transition; otherwise, they remain in their current configuration.
+  var showOnAppear: Bool { get }
+
+  /// If non-`nil`, the bars will automatically hide after `autoHideDelay`.
+  var autoHideDelay: TimeInterval? { get }
+
+  /// The view animated with the tab bar. This view may be constrained either to the bottom layout guide or the bottom edge of the view.
+  var tabBarAttachedView: UIView? { get set }
+
+  /// The distance between the bottom of the tab bar-attached view and the top of the tab bar.
+  var tabBarAttachedViewGap: CGFloat { get set }
+
+
+  // MARK: State
+
+  /// Set to `true` when the user has manually shown the bars after they were automatically hidden.
+  var autoHideOverride: Bool { get set }
+
+  /// Set to `true` when the bars are currently hidden; `false`, otherwise.
+  var barsHidden: Bool { get set }
+
+  /// Hides the bars if not cancelled before the `autoHideDelay` expires.
+  ///
+  /// Auto-hide is cancelled when the bars state is changed and when the view disappears.
+  var autoHideWorkItem: DispatchWorkItem? { get set }
+}
+
+
+/// Associates `HidingBars` configurations with `UIViewController` events. Call `updateBars(for:)` in the view controller method corresponding to each event.
+enum HidingBarsEvent {
+
+  /// To be called on `viewDidLoad(_:)`, "attaches" the given view (if provided) to the tab bar and installs the gesture recognizer (if provided) for toggling the bars visibility.
+  ///
+  /// The attachedView needs to have its bottom edge constrained either to the view or the bottom layout guide.
+  case viewDidLoad(attachedView: UIView?, recognizer: UIGestureRecognizer?)
+
+  /// To be called on `viewWillAppear(_:)`, resets any bars auto-hide override the user set by explicitly showing the bars, and shows the bars if `showOnAppear` is enabled; otherwise, shows the bars according to their last `barsHidden` state.
+  case viewWillAppear
+
+  /// To be called on `viewWillTransition(to:with:)`, makes the bars visible when the device rotates, auto-hiding in accordance with the `hideOnAppear` setting.
+  ///
+  /// `toSize` is that given in the `UIViewController.viewWillTransition(to:with:)` notification.
+  case viewWillTransition(toSize: CGSize)
+
+  /// To be called on `viewWillLayoutSubviews()`, restores the tab bar-hidden position of the tab bar-attached view.
+  case viewWillLayoutSubviews
+
+  /// To be called on `viewWillDisappear(_:)`, cancels any pending auto-hide.
+  case viewWillDisappear
 }
 
 

@@ -45,17 +45,20 @@ class BarsSettingsModel: SettingsModel, HidingBarsSettings, CustomStringConverti
     set { set(isOn: newValue, forName: "\(#function)") }
   }
 
-  var autoHideDelay: TimeInterval = 3
+  var autoHideDelay: TimeInterval? = 3
 
   /// A string representation of the configuration (non-state) items.
   var description: String {
     return "\(#function): hideNavBar = \(hideNavBar); hideTabBar = \(hideTabBar); showOnAppear = \(showOnAppear); hideOnAppear = \(hideOnAppear); autoHideDelay = \(autoHideDelay)"
   }
 
+  var autoHideOverride: Bool = false
+  
+  var tabBarAttachedView: UIView?
+
   // MARK: State
 
-  var autoHideOverride: Bool = false
-  var tabBarAttachedView: UIView?
+  var tabBarAttachedViewGap: CGFloat = 0
   var barsHidden: Bool = false
   var autoHideWorkItem: DispatchWorkItem?
 }
