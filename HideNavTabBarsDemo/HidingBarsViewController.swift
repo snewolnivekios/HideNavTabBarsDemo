@@ -103,27 +103,10 @@ fileprivate let swizzle: (UIViewController.Type) -> () = { UIViewController in
     (#selector(UIViewController.viewDidDisappear(_:)), #selector(UIViewController.swizzled_viewDidDisappear(_:))),
     ]
 
-  /// Swizzles the `originalSelector` and `replacementSelector` method implementations so that calling the original runs the replacement method logic, and calling the replacement selector runs the original method logic.
-  ///
-  /// - parameter originalSelector: The original class method selector that will take on the replacement method selector.
-  /// - parameter replacementSelector: The replacement method selector that will take on the original class method selector.
-  func _swizzle(_ originalSelector: Selector, _ replacementSelector: Selector) {
-
+  // Swizzle the `originalSelector` and `replacementSelector` method implementations so that calling the original runs the replacement method logic, and calling the replacement selector runs the original method logic.
+  for (originalSelector, replacementSelector) in swizzleSelectors {
     let originalMethod = class_getInstanceMethod(UIViewController, originalSelector)
     let replacementMethod = class_getInstanceMethod(UIViewController, replacementSelector)
-
-    // Associate replacement method implementation with original selector, if it exists [a() instead calls b()]
-    let didAddMethod = class_addMethod(UIViewController, originalSelector, method_getImplementation(replacementMethod), method_getTypeEncoding(replacementMethod))
-
-    if didAddMethod { // always false for the given original swizzles
-      // Associate replacement selector with original method implementation [b() instead calls a()]
-      class_replaceMethod(UIViewController, replacementSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
-    } else { // original selector already existed; always the case for the given original swizzles
-      method_exchangeImplementations(originalMethod, replacementMethod)
-    }
-  }
-
-  for (originalSelector, replacementSelector) in swizzleSelectors {
-    _swizzle(originalSelector, replacementSelector)
+    method_exchangeImplementations(originalMethod, replacementMethod)
   }
 }
