@@ -31,7 +31,7 @@ extension UIViewController {
   open override class func initialize() {
     // make sure this isn't a subclass
     guard self === UIViewController.self else { return }
-    swizzled(self)
+    swizzle(self)
   }
 
   // For each event, the original UIViewController method is called, followed by the notification center post. See "Invoking _cmd" at http://nshipster.com/method-swizzling/ for more information.
@@ -90,33 +90,40 @@ extension Notification.Name {
 }
 
 /// Swizzles `UIViewController` view event methods with new methods that post `NotificationCenter` notifications `UIViewControllerView___` for `DidLoad`, `WillLayoutSubviews`, etc.
-fileprivate let swizzled: (UIViewController.Type) -> () = { viewController in
+fileprivate let swizzle: (UIViewController.Type) -> () = { UIViewController in
 
-  let swizzles: [(original: Selector, swizzled: Selector)] = [
-    (#selector(viewController.viewDidLoad), #selector(viewController.swizzled_viewDidLoad)),
-    (#selector(viewController.viewWillAppear(_:)), #selector(viewController.swizzled_viewWillAppear(_:))),
-    (#selector(viewController.viewDidAppear(_:)), #selector(viewController.swizzled_viewDidAppear(_:))),
-    (#selector(viewController.viewWillLayoutSubviews), #selector(viewController.swizzled_viewWillLayoutSubviews)),
-    (#selector(viewController.viewDidLayoutSubviews), #selector(viewController.swizzled_viewDidLayoutSubviews)),
-    (#selector(viewController.viewWillTransition(to:with:)), #selector(viewController.swizzled_viewWillTransition(to:with:))),
-    (#selector(viewController.viewWillDisappear(_:)), #selector(viewController.swizzled_viewWillDisappear(_:))),
-    (#selector(viewController.viewDidDisappear(_:)), #selector(viewController.swizzled_viewDidDisappear(_:))),
+  let swizzleSelectors: [(original: Selector, replacement: Selector)] = [
+    (#selector(UIViewController.viewDidLoad), #selector(UIViewController.swizzled_viewDidLoad)),
+    (#selector(UIViewController.viewWillAppear(_:)), #selector(UIViewController.swizzled_viewWillAppear(_:))),
+    (#selector(UIViewController.viewDidAppear(_:)), #selector(UIViewController.swizzled_viewDidAppear(_:))),
+    (#selector(UIViewController.viewWillLayoutSubviews), #selector(UIViewController.swizzled_viewWillLayoutSubviews)),
+    (#selector(UIViewController.viewDidLayoutSubviews), #selector(UIViewController.swizzled_viewDidLayoutSubviews)),
+    (#selector(UIViewController.viewWillTransition(to:with:)), #selector(UIViewController.swizzled_viewWillTransition(to:with:))),
+    (#selector(UIViewController.viewWillDisappear(_:)), #selector(UIViewController.swizzled_viewWillDisappear(_:))),
+    (#selector(UIViewController.viewDidDisappear(_:)), #selector(UIViewController.swizzled_viewDidDisappear(_:))),
     ]
 
-  func swizzle(original originalSelector: Selector, swizzled swizzledSelector: Selector) {
-    let originalMethod = class_getInstanceMethod(viewController, originalSelector)
-    let swizzledMethod = class_getInstanceMethod(viewController, swizzledSelector)
+  /// Swizzles the `originalSelector` and `replacementSelector` method implementations so that calling the original runs the replacement method logic, and calling the replacement selector runs the original method logic.
+  ///
+  /// - parameter originalSelector: The original class method selector that will take on the replacement method selector.
+  /// - parameter replacementSelector: The replacement method selector that will take on the original class method selector.
+  func _swizzle(_ originalSelector: Selector, _ replacementSelector: Selector) {
 
-    let didAddMethod = class_addMethod(viewController, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
+    let originalMethod = class_getInstanceMethod(UIViewController, originalSelector)
+    let replacementMethod = class_getInstanceMethod(UIViewController, replacementSelector)
 
-    if didAddMethod {
-      class_replaceMethod(viewController, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
-    } else {
-      method_exchangeImplementations(originalMethod, swizzledMethod)
+    // Associate replacement method implementation with original selector, if it exists [a() instead calls b()]
+    let didAddMethod = class_addMethod(UIViewController, originalSelector, method_getImplementation(replacementMethod), method_getTypeEncoding(replacementMethod))
+
+    if didAddMethod { // always false for the given original swizzles
+      // Associate replacement selector with original method implementation [b() instead calls a()]
+      class_replaceMethod(UIViewController, replacementSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+    } else { // original selector already existed; always the case for the given original swizzles
+      method_exchangeImplementations(originalMethod, replacementMethod)
     }
   }
 
-  for (original, swizzled) in swizzles {
-    swizzle(original: original, swizzled: swizzled)
+  for (originalSelector, replacementSelector) in swizzleSelectors {
+    _swizzle(originalSelector, replacementSelector)
   }
 }
