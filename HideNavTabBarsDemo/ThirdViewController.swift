@@ -23,55 +23,13 @@ import UIKit
 /// Adds hiding bars functionality without dependency upon `BarsViewController` or `BarsSettingsModel`.
 class ThirdViewController: UIViewController, HidingBars {
 
-  /// The settings required by the `HidingBars` protocol.
-  struct DefaultBarsSettings: HidingBarsSettings {
-
-    // Configuration
-    var hideTabBar = true
-    var hideNavBar = true
-    var hideOnAppear = true
-    var showOnAppear = true
-    var autoHideDelay: TimeInterval? = 3
-    var tabBarAttachedView: UIView?
-    var tabBarAttachedViewGap: CGFloat = 5
-
-    // State
-    var autoHideOverride = false
-    var barsHidden = false
-    var autoHideWorkItem: DispatchWorkItem?
-  }
-
   /// A `HidingBars` protocol property, configures bar behaviors.
-  var barsSettings: HidingBarsSettings = DefaultBarsSettings()
-
+  var barsSettings: HidingBarsSettings = DefaultHidingBarsSettings()
 
   /// Assigns the view to animate with the tab bar.
   override func viewDidLoad() {
     super.viewDidLoad()
-    updateBars(for: .viewDidLoad(attachedView: view.viewWithTag(42), recognizer: UITapGestureRecognizer(target: self, action: #selector(_toggleBars(sender:)))))
-  }
-
-
-  /// Shows the bars if `showOnAppear` is enabled; otherwise, shows them according to their last `barsHidden` state.
-  override func viewWillAppear(_ animated: Bool) {
-    updateBars(for: .viewWillAppear)
-  }
-
-
-  /// Makes the bars visible when the device rotates, auto-hiding in accordance with the auto-hide setting.
-  override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-    updateBars(for: .viewWillTransition(toSize: size))
-  }
-
-
-  /// Cancels any pending auto-hide timers.
-  override func viewWillDisappear(_ animated: Bool) {
-    updateBars(for: .viewWillDisappear)
-  }
-
-
-  /// In response to a tap gesture, hides/shows the bars.
-  func _toggleBars(sender: UITapGestureRecognizer) {
-    toggleBars()
+    barsSettings.tabBarAttachedViewGap = 5
+    activateHidingBars(attachedView: view.viewWithTag(42), gestureRecognizer: UITapGestureRecognizer())
   }
 }

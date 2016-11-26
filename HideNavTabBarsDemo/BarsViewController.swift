@@ -1,21 +1,21 @@
 //
 //  BarsViewController.swift
-//  BarsDemo
+//  HideNavTabBarsDemo
 //
 //  Copyright © 2016 Kevin L. Owens. All rights reserved.
 //
-//  BarsDemo is free software: you can redistribute it and/or modify
+//  HideNavTabBarsDemo is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
-//  BarsDemo is distributed in the hope that it will be useful,
+//  HideNavTabBarsDemo is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with BarsDemo.  If not, see <http://www.gnu.org/licenses/>.
+//  along with HideNavTabBarsDemo.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import UIKit
@@ -82,13 +82,9 @@ class BarsViewController: UIViewController, HidingBars {
   }
 
 
-  /// As the target action for the `BarsSettingsModel` switch value changes, updates the temporary user-override `hideOnAppear` with that given by the setting.
+  /// The target action for the `BarsSettingsModel` switch value changes. Override to provide custom behavior in response to this event.
   ///
   /// - parameter name: The identifier for the setting.
   /// - parameter isOn: Mirrors the changed `isOn` value of the corresponding `UISwitch`.
-  func changedSetting(with name: String, isOn: Bool) {
-//    if name == "hideOnAppear" {
-//      barsSettings.set(isOn: isOn, forName: name)
-//    }
-  }
+  func changedSetting(with name: String, isOn: Bool) { }
 }

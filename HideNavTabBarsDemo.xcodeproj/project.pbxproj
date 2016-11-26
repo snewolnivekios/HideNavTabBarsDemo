@@ -23,6 +23,8 @@
 		DCD895A01D67C81C001BF9A8 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = DCD8959E1D67C81C001BF9A8 /* LICENSE.txt */; };
 		DCD895A11D67C81C001BF9A8 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = DCD8959F1D67C81C001BF9A8 /* README.md */; };
 		DCEFDFC81D73B6BD00321C7B /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCEFDFC71D73B6BD00321C7B /* FirstViewController.swift */; };
+		DCFE8E8F1DE88233001AAB76 /* HidingBarsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCFE8E8E1DE88233001AAB76 /* HidingBarsViewController.swift */; };
+		DCFE8E931DE88E5C001AAB76 /* HidingBarsGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCFE8E921DE88E5C001AAB76 /* HidingBarsGestureRecognizer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +46,8 @@
 		DCD8959E1D67C81C001BF9A8 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = ../LICENSE.txt; sourceTree = "<group>"; };
 		DCD8959F1D67C81C001BF9A8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		DCEFDFC71D73B6BD00321C7B /* FirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
+		DCFE8E8E1DE88233001AAB76 /* HidingBarsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HidingBarsViewController.swift; sourceTree = "<group>"; };
+		DCFE8E921DE88E5C001AAB76 /* HidingBarsGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HidingBarsGestureRecognizer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,11 +113,13 @@
 			isa = PBXGroup;
 			children = (
 				DC70BD7C1DCE0A9B00B4D34B /* HidingBars.swift */,
+				DCFE8E8E1DE88233001AAB76 /* HidingBarsViewController.swift */,
+				DCFE8E921DE88E5C001AAB76 /* HidingBarsGestureRecognizer.swift */,
 				DC1BBAAC1D67CE7600EFE1B4 /* BarsViewController.swift */,
 				DCEFDFC71D73B6BD00321C7B /* FirstViewController.swift */,
 				DCD8958E1D67C7E6001BF9A8 /* SecondViewController.swift */,
-				DCC86E691DCE303500447A2A /* ThirdViewController.swift */,
 				DC1CF1171D6DC6F9000F3AF7 /* BarsSettingsViewController.swift */,
+				DCC86E691DCE303500447A2A /* ThirdViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -209,6 +215,8 @@
 				DCD8958F1D67C7E6001BF9A8 /* SecondViewController.swift in Sources */,
 				DC1CF1181D6DC6F9000F3AF7 /* BarsSettingsViewController.swift in Sources */,
 				DC70BD7D1DCE0A9B00B4D34B /* HidingBars.swift in Sources */,
+				DCFE8E8F1DE88233001AAB76 /* HidingBarsViewController.swift in Sources */,
+				DCFE8E931DE88E5C001AAB76 /* HidingBarsGestureRecognizer.swift in Sources */,
 				DCEFDFC81D73B6BD00321C7B /* FirstViewController.swift in Sources */,
 				DC1BBAAD1D67CE7600EFE1B4 /* BarsViewController.swift in Sources */,
 				DCD8958B1D67C7E6001BF9A8 /* AppDelegate.swift in Sources */,
