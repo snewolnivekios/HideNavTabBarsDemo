@@ -62,6 +62,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
   // MARK: - Initialization
 
   /// Populates `settingStrings` and `settingsPaths` from the bars settings property list, and restores all setting states to their default or persisted states.
+  ///
   /// - parameter id: A unique identifier that distignuishes one model from another.
   init(id: String) {
     modelId = id
@@ -114,6 +115,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
 
 
   /// Returns the label-detail-switch content for the cell at the given `indexPath`.
+  ///
   /// - parameter indexPath: The cell location within the table view.
   func content(for indexPath: IndexPath) -> (label: String, detail: String, isOn: Bool)? {
     if let name = settingsPaths[indexPath],
@@ -126,6 +128,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
 
 
   /// Returns `true` if the model switch state is "on" for the given property `name`, or `nil`, if there is no setting matching `name`.
+  ///
   /// - parameter name: The name of the setting.
   func isOn(forName name: String) -> Bool? {
     return settingStates[name]
@@ -133,6 +136,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
 
 
   /// Sets the model switch state for the given `indexPath`.
+  ///
   /// - parameter isOn: When true, the switch is selected.
   /// - parameter indexPath: The index path of the setting corresponding to the switch.
   func set(isOn: Bool, for indexPath: IndexPath) {
@@ -143,6 +147,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
 
 
   /// Sets the model switch state for the given property `name` if a setting by that `name` exists.
+  ///
   /// - parameter isOn: When true, the switch is selected.
   /// - parameter name: The name of the setting corresponding to the switch.
   func set(isOn: Bool, forName name: String) {
@@ -157,6 +162,7 @@ class SettingsModel: LabelDetailSwitchModelProtocol {
 
 
   /// Adds the given `observer` closure to the collection of closures that are called when a model switch value changes.
+  ///
   /// - parameter observer: A closure that receives the setting `name` and switch `isOn` state as arguments.
   /// - parameter object: The object containing `observer`.
   func add(observer: @escaping SwitchObserver, forObject object: Any) {

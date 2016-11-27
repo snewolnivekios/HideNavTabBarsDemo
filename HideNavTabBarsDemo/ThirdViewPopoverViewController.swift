@@ -1,5 +1,5 @@
 //
-//  ThirdViewController.swift
+//  ThirdViewPopoverViewController.swift
 //  HideNavTabBarsDemo
 //
 //  Copyright © 2016 Kevin L. Owens. All rights reserved.
@@ -20,19 +20,19 @@
 
 import UIKit
 
-/// Adds hiding bars functionality without dependency upon `BarsViewController` or `BarsSettingsModel`.
-class ThirdViewController: UIViewController, HidingBars {
+class ThirdViewPopoverViewController: UIViewController {
 
-  /// A `HidingBars` protocol property, configures bar behaviors.
-  var barsSettings: HidingBarsSettings = DefaultHidingBarsSettings()
+  var hideStatusBar = false
 
-  /// Assigns the view to animate with the tab bar.
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    barsSettings.tabBarAttachedViewGap = 5
-    activateHidingBars(attachedView: view.viewWithTag(42), gestureRecognizer: UITapGestureRecognizer())
+  override func viewWillAppear(_ animated: Bool) {
+    hideStatusBar = UIApplication.shared.keyWindow?.traitCollection.horizontalSizeClass == .compact
+    UIView.animate(withDuration: 0.5) {
+      self.setNeedsStatusBarAppearanceUpdate()
+    }
   }
 
-  /// Exit point for popover.
-  @IBAction func unwindFromPopover(segue: UIStoryboardSegue) { }
+  override var prefersStatusBarHidden: Bool {
+    return hideStatusBar
+  }
+
 }

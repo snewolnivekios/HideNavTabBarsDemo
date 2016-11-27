@@ -32,26 +32,13 @@ extension UIGestureRecognizer {
 
   /// Identifies the "associated object" gesture action closure.
   private struct AssociatedKeys {
-    static var gestureRecognizerBlockDescriptor = "gesture-recognizer-block"
+    static var actionBlock = "gesture-recognizer-block"
   }
 
   /// The closure called in response to the configured gesture event. Set to `nil` to remove a previously assigned closure.
-  var actionBlock: ActionBlock? {
-
-    get {
-      return objc_getAssociatedObject(self, &AssociatedKeys.gestureRecognizerBlockDescriptor) as? ActionBlock
-    }
-
-    set {
-      if let newValue = newValue {
-        objc_setAssociatedObject(
-          self,
-          &AssociatedKeys.gestureRecognizerBlockDescriptor,
-          newValue as Any,
-          .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-        )
-      }
-    }
+  private var actionBlock: ActionBlock? {
+    get { return objc_getAssociatedObject(self, &AssociatedKeys.actionBlock) as? ActionBlock }
+    set { objc_setAssociatedObject(self, &AssociatedKeys.actionBlock, newValue as Any, .OBJC_ASSOCIATION_RETAIN) }
   }
 
   /// Initializes an allocated gesture-recognizer object with an action block.
@@ -70,11 +57,12 @@ extension UIGestureRecognizer {
 
   /// Removes an action block from a gesture-recognizer object.
   func removeActionBlock() {
+    removeTarget(self, action: #selector(_actionSelector(sender:)))
     actionBlock = nil
   }
 
   /// Wraps a closure in a `Selector`-able method.
-  @objc private func _actionSelector(sender: UIGestureRecognizer) { // @objc required for "private"
+  dynamic private func _actionSelector(sender: UIGestureRecognizer) { // dynamic required to override private's static dispatch inference
     actionBlock?(sender)
   }
 }

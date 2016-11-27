@@ -21,33 +21,34 @@
 import UIKit
 
 
-/// A `UIViewController` conforming to this protocol gains the ability to hide and show either or both the navigation and tab bars in response to a user's gesture.
+/// A `UIViewController` extended by HidingBarsViewController.swift and conforming to this protocol gains the ability to hide and show either or both the navigation and tab bars in response to a gesture.
 ///
 /// To utilize this functionality:
 ///
-/// 1. Conform a view controller to this protocol (by providing the `barsSettings` property that configures the hiding bars behavior).
+/// 1. Add the HidingBars.swift, HidingBarsViewController.swift, and HidingBarsGestureRecognizer.swift files to your project.
+/// 1. Conform a view controller to this `HidingBars` protocol (by instantiating a `barsSettings` property that is used to configure the hiding bars behavior).
 /// 1. In `viewDidLoad(_:)`, add a call to `activateHidingBars(attachedView:gestureRecognizer:)`, with the attached view optionally subclassing `HidingBarsAttachedView` and the gesture recognizer optionally configured beyond an empty initializer.
 ///
-/// The `HidingBarsAttachedView`, as a collection of subviews, allows you to anchor more than one view to the tab bar while keeping that collection view itself from capturing the touch events used to toggle the visibility of the bars.
+/// The `HidingBarsAttachedView`, intended as a collection of subviews, allows you to anchor more than one view to the tab bar while keeping that collection view itself from capturing the touch events used to toggle the visibility of the bars. Use of this view is not necessary if you only have a single view you need to attach to the tab bar.
 ///
-/// The gesture recognizer could simply be given as `UITapGestureRecognizer()`:
+/// The gesture recognizer, used to allow the user to toggle the visibility of the bars, need not be configured:
 ///
-///       activateHidingBars(attachedView: view.viewWithTag(42), gestureRecognizer: UITapGestureRecognizer())
+///     activateHidingBars(attachedView: view.viewWithTag(42), gestureRecognizer: UITapGestureRecognizer())
 ///
-/// or as a configured recognizer:
+/// `HidingBars` adds its own target-action for the gesture, and in this case, relies on the default single-tap configuration. It may also be custom configured, again without specifying a target-action:
 ///
-///       @IBOutlet weak var button: UIButton!
-///       let gr = UITapGestureRecognizer()
-///       gr.numberOfTouchesRequired = 2
-///       activateHidingBars(attachedView: button, gestureRecognizer: gr)
+///     @IBOutlet weak var button: UIButton!
+///     let gr = UITapGestureRecognizer()
+///     gr.numberOfTouchesRequired = 2
+///     activateHidingBars(attachedView: button, gestureRecognizer: gr)
 ///
-/// Note that in both cases, an gesture target-action is not required, although it is allowable:
+/// You may also provide your own target-action:
 ///
-///       @IBOutlet weak var myView: UIView!
-///       let myRecognizer = UITapGestureRecognizer(target: self, action: #selector(someAction(sender:))
-///       activateHidingBars(attachedView: myView, gestureRecognizer: myRecognizer)
+///     @IBOutlet weak var myView: UIView!
+///     let myRecognizer = UITapGestureRecognizer(target: self, action: #selector(someAction(sender:))
+///     activateHidingBars(attachedView: myView, gestureRecognizer: myRecognizer)
 ///
-/// In this case, the gesture recognizer will call your action method in addition to toggling the visibility of the bars as configured.
+/// In this case, the gesture recognizer will call your action method in addition to calling that added by `HidingBars`.
 
 protocol HidingBars: class {
 

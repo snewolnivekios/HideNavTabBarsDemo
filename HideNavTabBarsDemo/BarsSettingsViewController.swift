@@ -24,7 +24,7 @@ import UIKit
 class BarsSettingsViewController: UITableViewController {
 
   /// The data containing switch-configurable navigation and tab bar animation settings.
-  var barsSettingsModel: BarsSettingsModel!
+  var barsSettingsModel = BarsSettingsModel(id: "\(#file)")
 
 
   /// Configures cell heights to adjust to autosizing subviews (where Lines is set to 0).
